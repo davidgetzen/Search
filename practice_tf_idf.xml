@@ -1,0 +1,57 @@
+<xml>
+ <page>
+   <title>
+     Page 1
+   </title>
+   <id>
+     1
+   </id>
+   <text>
+     computer science is cool [[Page 2]] [[Page 3|Amazing Page]]
+   </text>
+ </page>
+ <page>
+   <title>
+   Page 2
+ </title>
+ <id>
+   2
+ </id>
+ <text>
+     science and engineering are super cool [[Page 4]] [[Page 4]]
+ </text>
+ </page>
+ <page>
+   <title>
+   Page 3
+ </title>
+ <id>
+   3
+ </id>
+ <text>
+     super is a cool word and science is cool [[Page 5]]
+ </text>
+ </page>
+ <page>
+   <title>
+   Page 4
+ </title>
+ <id>
+   4
+ </id>
+ <text>
+     engineering is about cool engineers
+ </text>
+ </page>
+ <page>
+   <title>
+   Page 5
+ </title>
+ <id>
+   5
+ </id>
+ <text>
+     scientists are awesome
+ </text>
+ </page>
+</xml>
