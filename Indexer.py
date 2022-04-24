@@ -2,8 +2,11 @@ import re
 import xml.etree.ElementTree as et
 import file_io
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
 
 STOP_WORDS = stopwords.words('english')
+the_stemmer = PorterStemmer()
 
 class Indexer:
     def __init__(self, data_path, title_path):
@@ -26,6 +29,7 @@ class Indexer:
             page_text = page.find("text").text.lower()
             page_tokens = self.tokenize_text(page_text)
             page_without_stop_words = self.remove_stop_words(page_tokens)
+            page_with_stemmed_words = self.stem_words(page_without_stop_words)
 
             ids_to_words[page_id] = page_tokens
 
@@ -41,7 +45,14 @@ class Indexer:
         for word in words:
             if word not in STOP_WORDS:
                 no_stop_words.append(word)
-        return no_stop_words        
+        return no_stop_words    
+    def stem_words(self, word_list):
+        stemmed_words = []
+        for word in word_list:
+            new_word = the_stemmer.stem(word)
+            stemmed_words.append(new_word)
+        return stemmed_words
+
                 
         
 
