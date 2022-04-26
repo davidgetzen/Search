@@ -41,23 +41,7 @@ class Indexer:
         return text_tokens
 
     def remove_stop_words(self, words):
-        no_stop_words = []
-        for word in words:
-            if word not in STOP_WORDS:
-                no_stop_words.append(word)
-        return no_stop_words    
-    def stem_words(self, word_list):
-        stemmed_words = []
-        for word in word_list:
-            new_word = the_stemmer.stem(word)
-            stemmed_words.append(new_word)
-        return stemmed_words
+        return [word for word in words if word not in STOP_WORDS]   
 
-                
-        
-
-
-
-
-
-        
+    def stem_words(self, words):
+        return [the_stemmer.stem(word) for word in words]
