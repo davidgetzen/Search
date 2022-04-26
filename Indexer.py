@@ -31,9 +31,23 @@ class Indexer:
             ids_to_words[page_id] = self.get_page_words(page_text)
 
         corpus = self.get_corpus(ids_to_words)
-        ids_to_counts = {}
-        for word in corpus:
-            ids_to_counts[word] = corpus.count(word)
+        words_to_ids_to_counts = {}
+
+        for doc_id in ids_to_words.keys(): # For each document id in ids_to_words
+            for word in ids_to_words[doc_id]: # For each word in corpus of the document
+
+                # If the word is not in the word -> id -> count, initialize a dict for it
+                # with a count of 1.
+                if word not in words_to_ids_to_counts.keys(): 
+                    words_to_ids_to_counts[word] = {doc_id: 1}
+                # If it is there, check whether there is a count for the specific doc_id we're looping through.    
+                else:
+                    # If it is the case, add 1 to that count.
+                    if doc_id in words_to_ids_to_counts[word].keys():
+                        words_to_ids_to_counts[word][doc_id] += 1
+                    # If not, initialize the count to 1.    
+                    else:
+                        words_to_ids_to_counts[word][doc_id] = 1
 
         file_io.write_title_file(self.title_path, ids_to_titles)
 
