@@ -33,7 +33,7 @@ class Indexer:
         corpus = self.get_corpus(ids_to_words)
         words_to_ids_to_counts = {}
         ids_to_words_to_counts = {}
-
+        words_to_ids_to_tfs = {}
         # for doc_id in ids_to_words.keys(): # For each document id in ids_to_words
         #     for word in ids_to_words[doc_id]: # For each word in corpus of the document
 
@@ -54,7 +54,9 @@ class Indexer:
             for id in ids_to_words.keys():
                 if word not in words_to_ids_to_counts:
                     words_to_ids_to_counts[word] = {}
+                    words_to_ids_to_tfs[word] = {}
                 words_to_ids_to_counts[word][id] = ids_to_words[id].count(word)
+                words_to_ids_to_tfs[word][id] = 0.0
 
         for id in ids_to_words.keys():
             ids_to_words_to_counts[id] = {}
@@ -62,6 +64,14 @@ class Indexer:
                 if word not in ids_to_words_to_counts[id]:
                     ids_to_words_to_counts[id][word] = ids_to_words[id].count(
                         word)
+
+        for id in ids_to_words_to_counts.keys():
+            a_j = max(
+                [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
+            for word in ids_to_words_to_counts[id].keys():
+                tf = (ids_to_words_to_counts[id][word])/a_j
+                words_to_ids_to_tfs[word][id] = tf
+            # for words in ids_to_words_to_counts[id]:
 
         file_io.write_title_file(self.title_path, ids_to_titles)
 
