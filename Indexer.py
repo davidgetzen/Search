@@ -27,11 +27,7 @@ class Indexer:
             ids_to_titles[page_id] = page_title
 
             page_text = page.find("text").text.lower()
-            page_tokens = self.tokenize_text(page_text)
-            page_without_stop_words = self.remove_stop_words(page_tokens)
-            page_with_stemmed_words = self.stem_words(page_without_stop_words)
-
-            ids_to_words[page_id] = page_tokens
+            ids_to_words[page_id] = self.get_page_words(page_text)
 
         file_io.write_title_file(self.title_path, ids_to_titles)
     
@@ -45,3 +41,9 @@ class Indexer:
 
     def stem_words(self, words):
         return [the_stemmer.stem(word) for word in words]
+
+    def get_page_words(self, page_text):
+        page_tokens = self.tokenize_text(page_text)
+        page_without_stop_words = self.remove_stop_words(page_tokens)
+        page_with_stemmed_words = self.stem_words(page_without_stop_words)
+        return page_with_stemmed_words
