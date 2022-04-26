@@ -1,3 +1,5 @@
+from math import log
+import numpy
 import re
 import xml.etree.ElementTree as et
 import file_io
@@ -10,9 +12,10 @@ the_stemmer = PorterStemmer()
 
 
 class Indexer:
-    def __init__(self, data_path, title_path):
+    def __init__(self, data_path, title_path, words_path):
         self.file_path = data_path
         self.title_path = title_path
+        self.words_path = words_path
 
     def parse_xml(self):
         root = et.parse(self.file_path).getroot()
@@ -34,6 +37,8 @@ class Indexer:
         words_to_ids_to_counts = {}
         ids_to_words_to_counts = {}
         words_to_ids_to_tfs = {}
+        words_to_idfs = {}
+        words_to_ids_to_relevance = {}
         # for doc_id in ids_to_words.keys(): # For each document id in ids_to_words
         #     for word in ids_to_words[doc_id]: # For each word in corpus of the document
 
@@ -51,12 +56,15 @@ class Indexer:
         #                 words_to_ids_to_counts[word][doc_id] = 1
 
         for word in corpus:
+            words_to_idfs[word] = 0.0
             for id in ids_to_words.keys():
                 if word not in words_to_ids_to_counts:
                     words_to_ids_to_counts[word] = {}
                     words_to_ids_to_tfs[word] = {}
+                    words_to_ids_to_relevance[word] = {}
                 words_to_ids_to_counts[word][id] = ids_to_words[id].count(word)
                 words_to_ids_to_tfs[word][id] = 0.0
+                words_to_ids_to_relevance[word][id] = 0.0
 
         for id in ids_to_words.keys():
             ids_to_words_to_counts[id] = {}
@@ -71,9 +79,19 @@ class Indexer:
             for word in ids_to_words_to_counts[id].keys():
                 tf = (ids_to_words_to_counts[id][word])/a_j
                 words_to_ids_to_tfs[word][id] = tf
-            # for words in ids_to_words_to_counts[id]:
+
+        for word in words_to_ids_to_counts.keys():
+            n = len(words_to_ids_to_counts[word].keys())
+            n_i = len([id for id in words_to_ids_to_counts[word] if words_to_ids_to_counts[word][id] != 0])
+            words_to_idfs[word] = log(n/n_i)
+
+        for word in words_to_ids_to_tfs.keys():
+            idf = words_to_idfs[word]
+            for id in words_to_ids_to_tfs[word].keys():
+                words_to_ids_to_relevance[word][id] = words_to_ids_to_tfs[word][id] * idf
 
         file_io.write_title_file(self.title_path, ids_to_titles)
+        file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
 
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
@@ -99,3 +117,6 @@ class Indexer:
                 if word not in corpus:
                     corpus.append(word)
         return corpus
+
+    def compute_word_relevances():
+        pass    
