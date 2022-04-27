@@ -25,6 +25,7 @@ class Indexer:
         #ids_to_words = {}
         ids_to_words_to_counts = {}
         words_to_ids_to_tfs = {}
+        words_to_idfs = {}
 
         for page in all_pages:
 
@@ -52,6 +53,12 @@ class Indexer:
                 if word not in words_to_ids_to_tfs.keys():
                     words_to_ids_to_tfs[word] = {}
                 words_to_ids_to_tfs[word][page_id] = tf
+
+        # Computing Inverse Document Frequencies
+        n = len(ids_to_words_to_counts.keys())
+        for word in words_to_ids_to_tfs.keys():
+            n_i = len(words_to_ids_to_tfs[word].keys())
+            words_to_idfs[word] = log(n/n_i)
 
 
                 # if page_id not in words_to_ids_to_tfs[word].keys():
