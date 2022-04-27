@@ -55,18 +55,15 @@ class Indexer:
                     words_to_ids_to_tfs[word] = {}
                 words_to_ids_to_tfs[word][page_id] = tf
 
-        # Computing Inverse Document Frequencies
+        # Computing Inverse Document Frequencies and Relevance
         n = len(ids_to_words_to_counts.keys())
         for word in words_to_ids_to_tfs.keys():
             n_i = len(words_to_ids_to_tfs[word].keys())
-            words_to_idfs[word] = log(n/n_i)
-
-        # Computing Relevance
-        for word in words_to_ids_to_tfs.keys():
+            
+            idf = log(n/n_i)
             words_to_ids_to_relevance[word] = {}
             for id in words_to_ids_to_tfs[word]:
-                words_to_ids_to_relevance[word][id] = words_to_idfs[word] * words_to_ids_to_tfs[word][id]
-
+                words_to_ids_to_relevance[word][id] = idf * words_to_ids_to_tfs[word][id]
 
                 # if page_id not in words_to_ids_to_tfs[word].keys():
                 #     words_to_ids_to_tfs[word][page_id] = 1
