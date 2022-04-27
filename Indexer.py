@@ -26,6 +26,7 @@ class Indexer:
         ids_to_words_to_counts = {}
         words_to_ids_to_tfs = {}
         words_to_idfs = {}
+        words_to_ids_to_relevance = {}
 
         for page in all_pages:
 
@@ -59,6 +60,12 @@ class Indexer:
         for word in words_to_ids_to_tfs.keys():
             n_i = len(words_to_ids_to_tfs[word].keys())
             words_to_idfs[word] = log(n/n_i)
+
+        # Computing Relevance
+        for word in words_to_ids_to_tfs.keys():
+            words_to_ids_to_relevance[word] = {}
+            for id in words_to_ids_to_tfs[word]:
+                words_to_ids_to_relevance[word][id] = words_to_idfs[word] * words_to_ids_to_tfs[word][id]
 
 
                 # if page_id not in words_to_ids_to_tfs[word].keys():
@@ -141,7 +148,7 @@ class Indexer:
         # page-id would only store words appearing on page
         # ids_to_words_to_counts
         file_io.write_title_file(self.title_path, ids_to_titles)
-        #file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
+        file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
 
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''

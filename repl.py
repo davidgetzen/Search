@@ -1,6 +1,6 @@
 from Indexer import Indexer
 if __name__ == "__main__":
-    indexer = Indexer("wikis/test_tf_idf.xml", "title_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/SmallWiki.xml", "title_file.txt", "words_file.txt")
     print(indexer.parse_xml())
     # while True:
     # user_text = input("Please enter a string (or type :q to leave the program): ")
