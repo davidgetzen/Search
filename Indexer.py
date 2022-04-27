@@ -82,14 +82,20 @@ class Indexer:
 
         for word in words_to_ids_to_counts.keys():
             n = len(words_to_ids_to_counts[word].keys())
-            n_i = len([id for id in words_to_ids_to_counts[word] if words_to_ids_to_counts[word][id] != 0])
+            n_i = len([id for id in words_to_ids_to_counts[word]
+                      if words_to_ids_to_counts[word][id] != 0])
             words_to_idfs[word] = log(n/n_i)
 
         for word in words_to_ids_to_tfs.keys():
             idf = words_to_idfs[word]
             for id in words_to_ids_to_tfs[word].keys():
                 words_to_ids_to_relevance[word][id] = words_to_ids_to_tfs[word][id] * idf
+        # think critically about how we populate the dictionary
+        # if we don't encounter the word in a document, dont add it as an entry
 
+        # page-ids to words to counts
+        # page-id would only store words appearing on page
+        # ids_to_words_to_counts
         file_io.write_title_file(self.title_path, ids_to_titles)
         file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
 
@@ -119,4 +125,4 @@ class Indexer:
         return corpus
 
     def compute_word_relevances():
-        pass    
+        pass
