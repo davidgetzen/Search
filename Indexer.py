@@ -22,7 +22,9 @@ class Indexer:
         all_pages = root.findall("page")
         ids_to_titles = {}
 
-        ids_to_words = {}
+        #ids_to_words = {}
+        ids_to_words_to_counts = {}
+        words_to_ids_to_tfs = {}
 
         for page in all_pages:
 
@@ -31,65 +33,100 @@ class Indexer:
             ids_to_titles[page_id] = page_title
 
             page_text = page.find("text").text.lower()
-            ids_to_words[page_id] = self.get_page_words(page_text)
+            page_words = self.get_page_words(page_text)
 
-        corpus = self.get_corpus(ids_to_words)
-        words_to_ids_to_counts = {}
-        ids_to_words_to_counts = {}
-        words_to_ids_to_tfs = {}
-        words_to_idfs = {}
-        words_to_ids_to_relevance = {}
-        # for doc_id in ids_to_words.keys(): # For each document id in ids_to_words
-        #     for word in ids_to_words[doc_id]: # For each word in corpus of the document
+            # Populating ids_to_words_to_counts is done here.
+            ids_to_words_to_counts[page_id] = {}
+            for word in page_words:
+                if word not in ids_to_words_to_counts[page_id]:
+                    ids_to_words_to_counts[page_id][word] = 1
+                else:
+                    ids_to_words_to_counts[page_id][word] += 1
 
-        #         # If the word is not in the word -> id -> count, initialize a dict for it
-        #         # with a count of 1.
-        #         if word not in words_to_ids_to_counts.keys():
-        #             words_to_ids_to_counts[word] = {doc_id: 1}
-        #         # If it is there, check whether there is a count for the specific doc_id we're looping through.
-        #         else:
-        #             # If it is the case, add 1 to that count.
-        #             if doc_id in words_to_ids_to_counts[word].keys():
-        #                 words_to_ids_to_counts[word][doc_id] += 1
-        #             # If not, initialize the count to 1.
-        #             else:
-        #                 words_to_ids_to_counts[word][doc_id] = 1
-
-        for word in corpus:
-            words_to_idfs[word] = 0.0
-            for id in ids_to_words.keys():
-                if word not in words_to_ids_to_counts:
-                    words_to_ids_to_counts[word] = {}
-                    words_to_ids_to_tfs[word] = {}
-                    words_to_ids_to_relevance[word] = {}
-                words_to_ids_to_counts[word][id] = ids_to_words[id].count(word)
-                words_to_ids_to_tfs[word][id] = 0.0
-                words_to_ids_to_relevance[word][id] = 0.0
-
-        for id in ids_to_words.keys():
-            ids_to_words_to_counts[id] = {}
-            for word in ids_to_words[id]:
-                if word not in ids_to_words_to_counts[id]:
-                    ids_to_words_to_counts[id][word] = ids_to_words[id].count(
-                        word)
-
-        for id in ids_to_words_to_counts.keys():
+            # Term Frequencies Computations
             a_j = max(
-                [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
-            for word in ids_to_words_to_counts[id].keys():
-                tf = (ids_to_words_to_counts[id][word])/a_j
-                words_to_ids_to_tfs[word][id] = tf
+                 [pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
+            for word in ids_to_words_to_counts[page_id].keys():
+                tf = (ids_to_words_to_counts[page_id][word])/a_j
 
-        for word in words_to_ids_to_counts.keys():
-            n = len(words_to_ids_to_counts[word].keys())
-            n_i = len([id for id in words_to_ids_to_counts[word]
-                      if words_to_ids_to_counts[word][id] != 0])
-            words_to_idfs[word] = log(n/n_i)
+                if word not in words_to_ids_to_tfs.keys():
+                    words_to_ids_to_tfs[word] = {}
+                words_to_ids_to_tfs[word][page_id] = tf
 
-        for word in words_to_ids_to_tfs.keys():
-            idf = words_to_idfs[word]
-            for id in words_to_ids_to_tfs[word].keys():
-                words_to_ids_to_relevance[word][id] = words_to_ids_to_tfs[word][id] * idf
+
+                # if page_id not in words_to_ids_to_tfs[word].keys():
+                #     words_to_ids_to_tfs[word][page_id] = 1
+                # else:
+                #     words_to_ids_to_tfs[word][page_id] += 1    
+
+
+            # # Computing Term Frequencies    
+            # for id in ids_to_words_to_counts.keys():
+            #  a_j = max(
+            #      [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
+            #  for word in ids_to_words_to_counts[id].keys():
+            #      tf = (ids_to_words_to_counts[id][word])/a_j
+            #      words_to_ids_to_tfs[word][id] = tf    
+
+            #ids_to_words[page_id] = self.get_page_words(page_text)
+
+        # corpus = self.get_corpus(ids_to_words)
+        # words_to_ids_to_counts = {}
+        # ids_to_words_to_counts = {}
+        # words_to_ids_to_tfs = {}
+        # words_to_idfs = {}
+        # words_to_ids_to_relevance = {}
+        # # for doc_id in ids_to_words.keys(): # For each document id in ids_to_words
+        # #     for word in ids_to_words[doc_id]: # For each word in corpus of the document
+
+        # #         # If the word is not in the word -> id -> count, initialize a dict for it
+        # #         # with a count of 1.
+        # #         if word not in words_to_ids_to_counts.keys():
+        # #             words_to_ids_to_counts[word] = {doc_id: 1}
+        # #         # If it is there, check whether there is a count for the specific doc_id we're looping through.
+        # #         else:
+        # #             # If it is the case, add 1 to that count.
+        # #             if doc_id in words_to_ids_to_counts[word].keys():
+        # #                 words_to_ids_to_counts[word][doc_id] += 1
+        # #             # If not, initialize the count to 1.
+        # #             else:
+        # #                 words_to_ids_to_counts[word][doc_id] = 1
+
+        # for word in corpus:
+        #     words_to_idfs[word] = 0.0
+        #     for id in ids_to_words.keys():
+        #         if word not in words_to_ids_to_counts:
+        #             words_to_ids_to_counts[word] = {}
+        #             words_to_ids_to_tfs[word] = {}
+        #             words_to_ids_to_relevance[word] = {}
+        #         words_to_ids_to_counts[word][id] = ids_to_words[id].count(word)
+        #         words_to_ids_to_tfs[word][id] = 0.0
+        #         words_to_ids_to_relevance[word][id] = 0.0
+
+        # for id in ids_to_words.keys():
+        #     ids_to_words_to_counts[id] = {}
+        #     for word in ids_to_words[id]:
+        #         if word not in ids_to_words_to_counts[id]:
+        #             ids_to_words_to_counts[id][word] = ids_to_words[id].count(
+        #                 word)
+
+        # for id in ids_to_words_to_counts.keys():
+        #     a_j = max(
+        #         [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
+        #     for word in ids_to_words_to_counts[id].keys():
+        #         tf = (ids_to_words_to_counts[id][word])/a_j
+        #         words_to_ids_to_tfs[word][id] = tf
+
+        # for word in words_to_ids_to_counts.keys():
+        #     n = len(words_to_ids_to_counts[word].keys())
+        #     n_i = len([id for id in words_to_ids_to_counts[word]
+        #               if words_to_ids_to_counts[word][id] != 0])
+        #     words_to_idfs[word] = log(n/n_i)
+
+        # for word in words_to_ids_to_tfs.keys():
+        #     idf = words_to_idfs[word]
+        #     for id in words_to_ids_to_tfs[word].keys():
+        #         words_to_ids_to_relevance[word][id] = words_to_ids_to_tfs[word][id] * idf
         # think critically about how we populate the dictionary
         # if we don't encounter the word in a document, dont add it as an entry
 
@@ -97,7 +134,7 @@ class Indexer:
         # page-id would only store words appearing on page
         # ids_to_words_to_counts
         file_io.write_title_file(self.title_path, ids_to_titles)
-        file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
+        #file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
 
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
