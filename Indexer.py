@@ -88,89 +88,9 @@ class Indexer:
                 words_to_ids_to_relevance[word][id] = idf * \
                     words_to_ids_to_tfs[word][id]
 
-
+        self.filter_unvalid_links()
         ids_to_pageranks = self.compute_pagerank_scores()            
 
-
-
-                # if page_id not in words_to_ids_to_tfs[word].keys():
-                #     words_to_ids_to_tfs[word][page_id] = 1
-                # else:
-                #     words_to_ids_to_tfs[word][page_id] += 1
-
-            # # Computing Term Frequencies
-            # for id in ids_to_words_to_counts.keys():
-            #  a_j = max(
-            #      [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
-            #  for word in ids_to_words_to_counts[id].keys():
-            #      tf = (ids_to_words_to_counts[id][word])/a_j
-            #      words_to_ids_to_tfs[word][id] = tf
-
-            #ids_to_words[page_id] = self.get_page_words(page_text)
-
-        # corpus = self.get_corpus(ids_to_words)
-        # words_to_ids_to_counts = {}
-        # ids_to_words_to_counts = {}
-        # words_to_ids_to_tfs = {}
-        # words_to_idfs = {}
-        # words_to_ids_to_relevance = {}
-        # # for doc_id in ids_to_words.keys(): # For each document id in ids_to_words
-        # #     for word in ids_to_words[doc_id]: # For each word in corpus of the document
-
-        # #         # If the word is not in the word -> id -> count, initialize a dict for it
-        # #         # with a count of 1.
-        # #         if word not in words_to_ids_to_counts.keys():
-        # #             words_to_ids_to_counts[word] = {doc_id: 1}
-        # #         # If it is there, check whether there is a count for the specific doc_id we're looping through.
-        # #         else:
-        # #             # If it is the case, add 1 to that count.
-        # #             if doc_id in words_to_ids_to_counts[word].keys():
-        # #                 words_to_ids_to_counts[word][doc_id] += 1
-        # #             # If not, initialize the count to 1.
-        # #             else:
-        # #                 words_to_ids_to_counts[word][doc_id] = 1
-
-        # for word in corpus:
-        #     words_to_idfs[word] = 0.0
-        #     for id in ids_to_words.keys():
-        #         if word not in words_to_ids_to_counts:
-        #             words_to_ids_to_counts[word] = {}
-        #             words_to_ids_to_tfs[word] = {}
-        #             words_to_ids_to_relevance[word] = {}
-        #         words_to_ids_to_counts[word][id] = ids_to_words[id].count(word)
-        #         words_to_ids_to_tfs[word][id] = 0.0
-        #         words_to_ids_to_relevance[word][id] = 0.0
-
-        # for id in ids_to_words.keys():
-        #     ids_to_words_to_counts[id] = {}
-        #     for word in ids_to_words[id]:
-        #         if word not in ids_to_words_to_counts[id]:
-        #             ids_to_words_to_counts[id][word] = ids_to_words[id].count(
-        #                 word)
-
-        # for id in ids_to_words_to_counts.keys():
-        #     a_j = max(
-        #         [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
-        #     for word in ids_to_words_to_counts[id].keys():
-        #         tf = (ids_to_words_to_counts[id][word])/a_j
-        #         words_to_ids_to_tfs[word][id] = tf
-
-        # for word in words_to_ids_to_counts.keys():
-        #     n = len(words_to_ids_to_counts[word].keys())
-        #     n_i = len([id for id in words_to_ids_to_counts[word]
-        #               if words_to_ids_to_counts[word][id] != 0])
-        #     words_to_idfs[word] = log(n/n_i)
-
-        # for word in words_to_ids_to_tfs.keys():
-        #     idf = words_to_idfs[word]
-        #     for id in words_to_ids_to_tfs[word].keys():
-        #         words_to_ids_to_relevance[word][id] = words_to_ids_to_tfs[word][id] * idf
-        # think critically about how we populate the dictionary
-        # if we don't encounter the word in a document, dont add it as an entry
-
-        # page-ids to words to counts
-        # page-id would only store words appearing on page
-        # ids_to_words_to_counts
         file_io.write_title_file(self.title_path, self.ids_to_titles)
         file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
         file_io.write_docs_file(self.docs_path, ids_to_pageranks)
@@ -236,7 +156,7 @@ class Indexer:
     # we'll use the titles to ids dictionary
 
     def add_pagerank_link(self, current_id, linked_title):
-        if self.ids_to_titles[current_id] != linked_title:
+        if self.ids_to_titles[current_id].lower() != linked_title.lower():
             self.ids_to_links[current_id].append(linked_title)
         #print("went through that")
         #if linked_title in self.titles_to_ids.keys():
@@ -251,13 +171,15 @@ class Indexer:
         for doc_id, links in self.ids_to_links.items():
             ids_to_links_ids[doc_id] = set()
             for link in links:
-                if link in self.ids_to_links.keys():
-                    ids_to_links_ids[doc_id] = self.ids_to_links[doc_id]
-
+                if link in self.ids_to_links[doc_id]:
+                    ids_to_links_ids[doc_id].add(self.titles_to_ids[link])
+        self.ids_to_links = ids_to_links_ids
 
 
     def get_pagerank_weight(self, page_id, link_id):
         n = len(self.titles_to_ids)
+        link_title = self.ids_to_titles[link_id]
+
         if link_id in self.ids_to_links[page_id]:
             n_k = len(self.ids_to_links[page_id])
 
