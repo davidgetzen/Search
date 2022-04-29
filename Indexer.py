@@ -1,4 +1,5 @@
 from math import log
+from cv2 import split
 import numpy
 import re
 import xml.etree.ElementTree as et
@@ -10,6 +11,7 @@ from nltk.stem import PorterStemmer
 
 
 STOP_WORDS = stopwords.words('english')
+EPSILON = 0.15
 the_stemmer = PorterStemmer()
 
 
@@ -19,7 +21,9 @@ class Indexer:
         self.title_path = title_path
         self.words_path = words_path
         self.titles_to_ids = {}
-        self.pagerank_scores = {}
+        self.pagerank_weights = {}
+        self.ids_to_links = {}
+        #self.pagerank_scores = {}
         # self.is_pagerank = is_pagerank (save for querying)
         # if self.is_pagerank == "true":
         #     self.is_pagerank = True
@@ -44,8 +48,11 @@ class Indexer:
             ids_to_titles[page_id] = page_title
             self.titles_to_ids[page_title] = page_id
 
+            # Add page_id to pagerank weights dictionary
+            self.ids_to_links[page_id] = []
+
             page_text = page.find("text").text.lower()
-            page_words = self.get_page_words(page_text)
+            page_words = self.get_page_words(page_text, page_id)
 
             # Populating ids_to_words_to_counts is done here.
             ids_to_words_to_counts[page_id] = {}
@@ -168,21 +175,22 @@ class Indexer:
     def stem_words(self, words):
         return [the_stemmer.stem(word) for word in words]
 
-    def get_page_words(self, page_text):
+    def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
         page_without_stop_words = self.remove_stop_words(page_tokens)
         page_with_stemmed_words = self.stem_words(page_without_stop_words)
-        page_with_links_handled = self.handle_links(page_with_stemmed_words)
+        page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
         return page_with_links_handled
 
-    def handle_links(self, words_list):
+    def handle_links(self, words_list, page_id):
         for i in range(len(words_list)):
             word = words_list[i]
             if word[:2] == "[[" and word[len(word)-2:] == "]]":
                 word = word.strip("[]")
                 if "|" in word:
-                    words_list[i] = word.split("|")[1].strip("[]")
-                    # add pagerank logic here
+                    splitted_word = word.split("|")
+                    self.add_pagerank_link(page_id, splitted_word[0])
+                    words_list[i] = splitted_word[1]
                 else:
                     words_list[i] = word
         return words_list
@@ -201,6 +209,21 @@ class Indexer:
     # we'll use the titles to ids dictionary
 
     def add_pagerank_edge(self, current_id, linked_title):
-        if current_id in self.pagerank_scores.keys():
-            self.pagerank_scores[current_id] = {
-                self.titles_to_ids[linked_title]: 0.0}
+        link_id = self.titles_to_ids[linked_title]
+        self.ids_to_links[current_id].append(link_id)
+
+    def get_pagerank_weight(self, page_id, link_id):
+        n = len(self.titles_to_ids)
+        if link_id in self.ids_to_links[page_id]:
+            n_k = len(self.ids_to_links[page_id])
+            return EPSILON/n + (1 - EPSILON)*(1/n_k)
+        else:
+            return EPSILON/n    
+
+        #ids -> list of pages the page links to
+        #we would get n_k with len of that list
+        # we would re-compute n_k everytime
+        
+        # use this, but add a pagerank_weights dict with id -> weight.
+        # it would give the weight for all pages page i links to.
+
