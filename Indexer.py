@@ -51,10 +51,10 @@ class Indexer:
             page_id = int(page.find("id").text)  # int(page.find("id"))
             page_title = page.find("title").text.strip()
             ids_to_titles[page_id] = page_title
-            self.titles_to_ids[page_title] = page_id
+            self.titles_to_ids[page_title.lower()] = page_id
 
             # Add page_id to pagerank weights dictionary
-            self.ids_to_links[page_id] = []
+            self.ids_to_links[page_id] = set()
 
             page_text = page.find("text").text.lower()
             page_words = self.get_page_words(page_text, page_id)
@@ -198,12 +198,28 @@ class Indexer:
             word = words_list[i]
             if word[:2] == "[[" and word[len(word)-2:] == "]]":
                 word = word.strip("[]")
+                link_to_add = ""
                 if "|" in word:
                     splitted_word = word.split("|")
-                    self.add_pagerank_link(page_id, splitted_word[0])
+                    link_to_add = splitted_word[0]
                     words_list[i] = splitted_word[1]
                 else:
+                    link_to_add = word
                     words_list[i] = word
+                print(page_id)
+                print(link_to_add)    
+
+                # TODO: We are encoutering a problem here.
+                # Basically, at this point, we haven't iterated through
+                # all of the pages. The result of that is that
+                # we cannot legitimately check whether a page that the page
+                # we're looping through links to is valid or not.
+                # this page could be a page that we haven't looped through yet.
+
+                # A solution for that would be to add page titles as we go,
+                # then to check the validity of these titles later, by looping
+                # through every page's link...
+                self.add_pagerank_link(page_id, link_to_add)   
         return words_list
 
     def get_corpus(self, ids_dict):
@@ -220,16 +236,23 @@ class Indexer:
     # we'll use the titles to ids dictionary
 
     def add_pagerank_link(self, current_id, linked_title):
+        print("went through that")
         if linked_title in self.titles_to_ids.keys():
+            print("helloooooo")
             link_id = self.titles_to_ids[linked_title]
-            if current_id != link_id and \
-                current_id not in self.ids_to_links[current_id]:
-                self.ids_to_links[current_id].append(link_id)
+            if current_id != link_id:
+                self.ids_to_links[current_id].add(link_id)
 
     def get_pagerank_weight(self, page_id, link_id):
         n = len(self.titles_to_ids)
         if link_id in self.ids_to_links[page_id]:
             n_k = len(self.ids_to_links[page_id])
+
+            # Case where a page links to nothing.
+            # We consider that it links to everything, except itself.
+            if n_k == 0:
+                n_k = n - 1
+
             return EPSILON/n + (1 - EPSILON)*(1/n_k)
         else:
             return EPSILON/n
