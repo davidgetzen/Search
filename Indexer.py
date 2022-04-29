@@ -1,10 +1,12 @@
-from math import log
+from math import log, sqrt
 from cv2 import split
 import numpy
 import re
 import xml.etree.ElementTree as et
+from sklearn.metrics import euclidean_distances
 
 from sqlalchemy import true
+from sympy import N
 import file_io
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -12,14 +14,17 @@ from nltk.stem import PorterStemmer
 
 STOP_WORDS = stopwords.words('english')
 EPSILON = 0.15
+DELTA = 0.001
 the_stemmer = PorterStemmer()
 
 
 class Indexer:
-    def __init__(self, data_path, title_path, words_path):
+    def __init__(self, data_path, title_path, words_path, docs_path):
         self.file_path = data_path
         self.title_path = title_path
         self.words_path = words_path
+        self.docs_path = docs_path
+
         self.titles_to_ids = {}
         self.pagerank_weights = {}
         self.ids_to_links = {}
@@ -82,6 +87,11 @@ class Indexer:
             for id in words_to_ids_to_tfs[word]:
                 words_to_ids_to_relevance[word][id] = idf * \
                     words_to_ids_to_tfs[word][id]
+
+
+        ids_to_pageranks = self.compute_pagerank_scores()            
+
+
 
                 # if page_id not in words_to_ids_to_tfs[word].keys():
                 #     words_to_ids_to_tfs[word][page_id] = 1
@@ -163,6 +173,7 @@ class Indexer:
         # ids_to_words_to_counts
         file_io.write_title_file(self.title_path, ids_to_titles)
         file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
+        file_io.write_docs_file(self.docs_path, ids_to_pageranks)
 
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
@@ -208,9 +219,12 @@ class Indexer:
     # computing the ids to ids to weights dictionary
     # we'll use the titles to ids dictionary
 
-    def add_pagerank_edge(self, current_id, linked_title):
-        link_id = self.titles_to_ids[linked_title]
-        self.ids_to_links[current_id].append(link_id)
+    def add_pagerank_link(self, current_id, linked_title):
+        if linked_title in self.titles_to_ids.keys():
+            link_id = self.titles_to_ids[linked_title]
+            if current_id != link_id and \
+                current_id not in self.ids_to_links[current_id]:
+                self.ids_to_links[current_id].append(link_id)
 
     def get_pagerank_weight(self, page_id, link_id):
         n = len(self.titles_to_ids)
@@ -218,7 +232,38 @@ class Indexer:
             n_k = len(self.ids_to_links[page_id])
             return EPSILON/n + (1 - EPSILON)*(1/n_k)
         else:
-            return EPSILON/n    
+            return EPSILON/n
+
+    def compute_pagerank_scores(self):
+        r_i = {}
+        r_f = {}
+
+        n = len(self.titles_to_ids)
+
+        # Initializing values in r and r'
+        for id in self.ids_to_links.keys():
+            r_i[id] = 0
+            r_f[id] = 1/n
+
+        while self.euclidean_distance(r_i, r_f) > DELTA:
+            r_i = r_f
+            for page_j in self.ids_to_links.keys():
+                r_f[page_j] = 0
+                for page_i in self.ids_to_links.keys():
+                    r_f[page_j] = r_f[page_j] + self.get_pagerank_weight(page_i, page_j) \
+                         * r_i[page_i]
+
+        return r_f                 
+
+    def euclidean_distance(self, r_i, r_f):
+        total_sum = 0
+        for page_id in r_i.keys():
+            total_sum += (r_f[page_id] - r_i[page_id])**2
+        return sqrt(total_sum)
+
+
+
+
 
         #ids -> list of pages the page links to
         #we would get n_k with len of that list
