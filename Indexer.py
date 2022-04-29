@@ -2,6 +2,8 @@ from math import log
 import numpy
 import re
 import xml.etree.ElementTree as et
+
+from sqlalchemy import true
 import file_io
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -16,6 +18,13 @@ class Indexer:
         self.file_path = data_path
         self.title_path = title_path
         self.words_path = words_path
+        self.titles_to_ids = {}
+        self.pagerank_scores = {}
+        # self.is_pagerank = is_pagerank (save for querying)
+        # if self.is_pagerank == "true":
+        #     self.is_pagerank = True
+        # else:
+        #     self.is_pagerank = False
 
     def parse_xml(self):
         root = et.parse(self.file_path).getroot()
@@ -33,6 +42,7 @@ class Indexer:
             page_id = int(page.find("id").text)  # int(page.find("id"))
             page_title = page.find("title").text.strip()
             ids_to_titles[page_id] = page_title
+            self.titles_to_ids[page_title] = page_id
 
             page_text = page.find("text").text.lower()
             page_words = self.get_page_words(page_text)
@@ -47,7 +57,7 @@ class Indexer:
 
             # Term Frequencies Computations
             a_j = max(
-                 [pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
+                [pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
             for word in ids_to_words_to_counts[page_id].keys():
                 tf = (ids_to_words_to_counts[page_id][word])/a_j
 
@@ -59,25 +69,25 @@ class Indexer:
         n = len(ids_to_words_to_counts.keys())
         for word in words_to_ids_to_tfs.keys():
             n_i = len(words_to_ids_to_tfs[word].keys())
-            
+
             idf = log(n/n_i)
             words_to_ids_to_relevance[word] = {}
             for id in words_to_ids_to_tfs[word]:
-                words_to_ids_to_relevance[word][id] = idf * words_to_ids_to_tfs[word][id]
+                words_to_ids_to_relevance[word][id] = idf * \
+                    words_to_ids_to_tfs[word][id]
 
                 # if page_id not in words_to_ids_to_tfs[word].keys():
                 #     words_to_ids_to_tfs[word][page_id] = 1
                 # else:
-                #     words_to_ids_to_tfs[word][page_id] += 1    
+                #     words_to_ids_to_tfs[word][page_id] += 1
 
-
-            # # Computing Term Frequencies    
+            # # Computing Term Frequencies
             # for id in ids_to_words_to_counts.keys():
             #  a_j = max(
             #      [pair for pair in ids_to_words_to_counts[id].items()], key=lambda x: x[1])[1]
             #  for word in ids_to_words_to_counts[id].keys():
             #      tf = (ids_to_words_to_counts[id][word])/a_j
-            #      words_to_ids_to_tfs[word][id] = tf    
+            #      words_to_ids_to_tfs[word][id] = tf
 
             #ids_to_words[page_id] = self.get_page_words(page_text)
 
@@ -162,7 +172,20 @@ class Indexer:
         page_tokens = self.tokenize_text(page_text)
         page_without_stop_words = self.remove_stop_words(page_tokens)
         page_with_stemmed_words = self.stem_words(page_without_stop_words)
-        return page_with_stemmed_words
+        page_with_links_handled = self.handle_links(page_with_stemmed_words)
+        return page_with_links_handled
+
+    def handle_links(self, words_list):
+        for i in range(len(words_list)):
+            word = words_list[i]
+            if word[:2] == "[[" and word[len(word)-2:] == "]]":
+                word = word.strip("[]")
+                if "|" in word:
+                    words_list[i] = word.split("|")[1].strip("[]")
+                    # add pagerank logic here
+                else:
+                    words_list[i] = word
+        return words_list
 
     def get_corpus(self, ids_dict):
         corpus = []
@@ -174,3 +197,10 @@ class Indexer:
 
     def compute_word_relevances():
         pass
+    # computing the ids to ids to weights dictionary
+    # we'll use the titles to ids dictionary
+
+    def add_pagerank_edge(self, current_id, linked_title):
+        if current_id in self.pagerank_scores.keys():
+            self.pagerank_scores[current_id] = {
+                self.titles_to_ids[linked_title]: 0.0}
