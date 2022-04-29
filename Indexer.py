@@ -28,6 +28,7 @@ class Indexer:
         self.titles_to_ids = {}
         self.pagerank_weights = {}
         self.ids_to_links = {}
+        self.ids_to_titles = {}
         #self.pagerank_scores = {}
         # self.is_pagerank = is_pagerank (save for querying)
         # if self.is_pagerank == "true":
@@ -38,7 +39,6 @@ class Indexer:
     def parse_xml(self):
         root = et.parse(self.file_path).getroot()
         all_pages = root.findall("page")
-        ids_to_titles = {}
 
         #ids_to_words = {}
         ids_to_words_to_counts = {}
@@ -50,11 +50,11 @@ class Indexer:
 
             page_id = int(page.find("id").text)  # int(page.find("id"))
             page_title = page.find("title").text.strip()
-            ids_to_titles[page_id] = page_title
+            self.ids_to_titles[page_id] = page_title
             self.titles_to_ids[page_title.lower()] = page_id
 
             # Add page_id to pagerank weights dictionary
-            self.ids_to_links[page_id] = set()
+            self.ids_to_links[page_id] = []
 
             page_text = page.find("text").text.lower()
             page_words = self.get_page_words(page_text, page_id)
@@ -171,7 +171,7 @@ class Indexer:
         # page-ids to words to counts
         # page-id would only store words appearing on page
         # ids_to_words_to_counts
-        file_io.write_title_file(self.title_path, ids_to_titles)
+        file_io.write_title_file(self.title_path, self.ids_to_titles)
         file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
         file_io.write_docs_file(self.docs_path, ids_to_pageranks)
 
@@ -236,12 +236,25 @@ class Indexer:
     # we'll use the titles to ids dictionary
 
     def add_pagerank_link(self, current_id, linked_title):
-        print("went through that")
-        if linked_title in self.titles_to_ids.keys():
-            print("helloooooo")
-            link_id = self.titles_to_ids[linked_title]
-            if current_id != link_id:
-                self.ids_to_links[current_id].add(link_id)
+        if self.ids_to_titles[current_id] != linked_title:
+            self.ids_to_links[current_id].append(linked_title)
+        #print("went through that")
+        #if linked_title in self.titles_to_ids.keys():
+            #print("helloooooo")
+            
+            #link_id = self.titles_to_ids[linked_title]
+            #if current_id != link_id:
+                #self.ids_to_links[current_id].append(link_id)
+
+    def filter_unvalid_links(self):
+        ids_to_links_ids = {}
+        for doc_id, links in self.ids_to_links.items():
+            ids_to_links_ids[doc_id] = set()
+            for link in links:
+                if link in self.ids_to_links.keys():
+                    ids_to_links_ids[doc_id] = self.ids_to_links[doc_id]
+
+
 
     def get_pagerank_weight(self, page_id, link_id):
         n = len(self.titles_to_ids)
@@ -283,6 +296,7 @@ class Indexer:
         for page_id in r_i.keys():
             total_sum += (r_f[page_id] - r_i[page_id])**2
         return sqrt(total_sum)
+
 
 
 
