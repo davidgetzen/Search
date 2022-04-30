@@ -1,24 +1,17 @@
 from math import log, sqrt
-from cv2 import split
-import numpy
 import re
 import xml.etree.ElementTree as et
-from sklearn.metrics import euclidean_distances
 
-from sqlalchemy import true
-from sympy import N
 import file_io
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
-
 
 STOP_WORDS = stopwords.words('english')
 EPSILON = 0.15
 DELTA = 0.001
 the_stemmer = PorterStemmer()
 
-
-class Indexer:
+class index:
     def __init__(self, data_path, title_path, words_path, docs_path):
         self.file_path = data_path
         self.title_path = title_path
@@ -29,22 +22,13 @@ class Indexer:
         self.pagerank_weights = {}
         self.ids_to_links = {}
         self.ids_to_titles = {}
-        self.all_weights = []
-        #self.pagerank_scores = {}
-        # self.is_pagerank = is_pagerank (save for querying)
-        # if self.is_pagerank == "true":
-        #     self.is_pagerank = True
-        # else:
-        #     self.is_pagerank = False
 
     def parse_xml(self):
         root = et.parse(self.file_path).getroot()
         all_pages = root.findall("page")
 
-        #ids_to_words = {}
         ids_to_words_to_counts = {}
         words_to_ids_to_tfs = {}
-        words_to_idfs = {}
         words_to_ids_to_relevance = {}
 
         for page in all_pages:
@@ -127,43 +111,12 @@ class Indexer:
                 else:
                     link_to_add = word
                     words_list[i] = word 
-
-                # TODO: We are encoutering a problem here.
-                # Basically, at this point, we haven't iterated through
-                # all of the pages. The result of that is that
-                # we cannot legitimately check whether a page that the page
-                # we're looping through links to is valid or not.
-                # this page could be a page that we haven't looped through yet.
-
-                # A solution for that would be to add page titles as we go,
-                # then to check the validity of these titles later, by looping
-                # through every page's link...
                 self.add_pagerank_link(page_id, link_to_add)   
         return words_list
-
-    def get_corpus(self, ids_dict):
-        corpus = []
-        for words in ids_dict.values():
-            for word in words:
-                if word not in corpus:
-                    corpus.append(word)
-        return corpus
-
-    def compute_word_relevances():
-        pass
-    # computing the ids to ids to weights dictionary
-    # we'll use the titles to ids dictionary
 
     def add_pagerank_link(self, current_id, linked_title):
         if self.ids_to_titles[current_id].lower() != linked_title.lower():
             self.ids_to_links[current_id].append(linked_title)
-        #print("went through that")
-        #if linked_title in self.titles_to_ids.keys():
-            #print("helloooooo")
-            
-            #link_id = self.titles_to_ids[linked_title]
-            #if current_id != link_id:
-                #self.ids_to_links[current_id].append(link_id)
 
     def filter_unvalid_links(self):
         ids_to_links_ids = {}
@@ -178,7 +131,6 @@ class Indexer:
 
     def get_pagerank_weight(self, page_id, link_id):
         n = len(self.titles_to_ids)
-        link_title = self.ids_to_titles[link_id]
 
         if link_id in self.ids_to_links[page_id]:
             n_k = len(self.ids_to_links[page_id])
@@ -188,11 +140,8 @@ class Indexer:
             if n_k == 0:
                 n_k = n - 1
 
-            weight = EPSILON/n + (1 - EPSILON)*(1/n_k)
-            self.all_weights.append((str(page_id) + " " + str(link_id), weight))
             return EPSILON/n + (1 - EPSILON)*(1/n_k)
         else:
-            self.all_weights.append((str(page_id) + " " + str(link_id), EPSILON/n))
             return EPSILON/n
 
     def compute_pagerank_scores(self):
@@ -221,16 +170,3 @@ class Indexer:
         for page_id in r_i.keys():
             total_sum += (r_f[page_id] - r_i[page_id])**2
         return sqrt(total_sum)
-
-
-
-
-
-
-        #ids -> list of pages the page links to
-        #we would get n_k with len of that list
-        # we would re-compute n_k everytime
-        
-        # use this, but add a pagerank_weights dict with id -> weight.
-        # it would give the weight for all pages page i links to.
-
