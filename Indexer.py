@@ -29,6 +29,7 @@ class Indexer:
         self.pagerank_weights = {}
         self.ids_to_links = {}
         self.ids_to_titles = {}
+        self.all_weights = []
         #self.pagerank_scores = {}
         # self.is_pagerank = is_pagerank (save for querying)
         # if self.is_pagerank == "true":
@@ -125,9 +126,7 @@ class Indexer:
                     words_list[i] = splitted_word[1]
                 else:
                     link_to_add = word
-                    words_list[i] = word
-                print(page_id)
-                print(link_to_add)    
+                    words_list[i] = word 
 
                 # TODO: We are encoutering a problem here.
                 # Basically, at this point, we haven't iterated through
@@ -172,7 +171,8 @@ class Indexer:
             ids_to_links_ids[doc_id] = set()
             for link in links:
                 if link in self.ids_to_links[doc_id]:
-                    ids_to_links_ids[doc_id].add(self.titles_to_ids[link])
+                    if link in self.titles_to_ids.keys():
+                        ids_to_links_ids[doc_id].add(self.titles_to_ids[link])
         self.ids_to_links = ids_to_links_ids
 
 
@@ -188,8 +188,11 @@ class Indexer:
             if n_k == 0:
                 n_k = n - 1
 
+            weight = EPSILON/n + (1 - EPSILON)*(1/n_k)
+            self.all_weights.append((str(page_id) + " " + str(link_id), weight))
             return EPSILON/n + (1 - EPSILON)*(1/n_k)
         else:
+            self.all_weights.append((str(page_id) + " " + str(link_id), EPSILON/n))
             return EPSILON/n
 
     def compute_pagerank_scores(self):
@@ -204,7 +207,7 @@ class Indexer:
             r_f[id] = 1/n
 
         while self.euclidean_distance(r_i, r_f) > DELTA:
-            r_i = r_f
+            r_i = r_f.copy()
             for page_j in self.ids_to_links.keys():
                 r_f[page_j] = 0
                 for page_i in self.ids_to_links.keys():
