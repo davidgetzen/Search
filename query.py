@@ -1,4 +1,4 @@
-import file_io
+import file_io as io
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
@@ -25,3 +25,11 @@ class Querier:
         return [the_stemmer.stem(word) for word in words]
 
     def score_docs(self, stemmed_words):
+        read_dict = {}
+        ids_to_scores = {}
+
+        io.read_words_file("words_file.txt", read_dict)
+        for word in stemmed_words:
+            if word in read_dict.keys():
+                for doc in read_dict[word]:
+                    ids_to_scores[doc] =
