@@ -1,7 +1,12 @@
 from index import index
+from query import Querier
+
 if __name__ == "__main__":
-    indexer = index("wikis/PageRankExample2.xml", "title_file.txt", "words_file.txt", "docs_file.txt")
-    print(indexer.parse_xml())
+    #indexer = index("wikis/MedWiki.xml", "title_file.txt", "words_file.txt", "docs_file.txt")
+    #indexer.parse_xml()
+    querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt")
+    querier.start_querying("China")
+    
     # while True:
     # user_text = input("Please enter a string (or type :q to leave the program): ")
     # if user_text == ":q":

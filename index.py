@@ -41,7 +41,7 @@ class index:
             # Add page_id to pagerank weights dictionary
             self.ids_to_links[page_id] = []
 
-            page_text = page.find("text").text.lower()
+            page_text = page.find("text").text.strip().lower()
             page_words = self.get_page_words(page_text, page_id)
 
             # Populating ids_to_words_to_counts is done here.
@@ -82,6 +82,7 @@ class index:
 
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
+        #n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+|""'''
         text_tokens = re.findall(n_regex, text)
         return text_tokens
 
@@ -99,20 +100,34 @@ class index:
         return page_with_links_handled
 
     def handle_links(self, words_list, page_id):
+        cleaned_list = []
         for i in range(len(words_list)):
             word = words_list[i]
-            if word[:2] == "[[" and word[len(word)-2:] == "]]":
+            if self.is_link(word):
                 word = word.strip("[]")
                 link_to_add = ""
                 if "|" in word:
                     splitted_word = word.split("|")
                     link_to_add = splitted_word[0]
-                    words_list[i] = splitted_word[1]
+
+                    words_in_link = splitted_word[1].split(" ")
+                    cleaned_list.extend(words_in_link)
                 else:
                     link_to_add = word
-                    words_list[i] = word 
-                self.add_pagerank_link(page_id, link_to_add)   
-        return words_list
+                    #words_list[i] = word
+                    if ":" in word:
+                        split_word = word.split(":")
+                        cleaned_list.extend(split_word[0].split(" "))
+                        cleaned_list.extend(split_word[1].split(" "))
+                    else:
+                        cleaned_list.extend(word.split(" "))
+                self.add_pagerank_link(page_id, link_to_add)
+            else:
+                cleaned_list.append(word)
+        return cleaned_list
+
+    def is_link(self, input_str):
+        return input_str[:2] == "[[" and input_str[len(input_str)-2:] == "]]"   
 
     def add_pagerank_link(self, current_id, linked_title):
         if self.ids_to_titles[current_id].lower() != linked_title.lower():
