@@ -2,28 +2,34 @@ import file_io as io
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-from pprint import pprint
+import sys
 
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
 
-
 class Querier:
     def __init__(self, title_path, doc_path, word_path, is_pagerank=False):
-        self.title_path = title_path
-        self.doc_path = doc_path
-        self.word_path = word_path
         self.is_pagerank = is_pagerank
 
-        self.ids_to_scores = {}
+        self.titles_dict = {}
+        io.read_title_file(title_path, self.titles_dict) 
 
+        self.words_dict = {}
+        io.read_words_file(word_path, self.words_dict)
+
+        self.docs_dict = {}
+        io.read_docs_file(doc_path, self.docs_dict)
+
+        self.ids_to_scores = {}
 
     def start_querying(self, query_text):
         words = self.get_query_words(query_text)
         self.score_docs(words)
-        self.get_final_results()
 
-
+        if len(self.ids_to_scores) == 0:
+            print("Sorry! No search results were found.")
+        else:
+            self.get_final_results()
 
     def get_query_words(self, query_text):
         query_words = query_text.strip().lower().split(" ")
@@ -38,31 +44,34 @@ class Querier:
         return [the_stemmer.stem(word) for word in words]
 
     def score_docs(self, stemmed_words):
-        words_dict = {}
-        docs_dict = {}
-
-        io.read_words_file(self.word_path, words_dict)
-        io.read_docs_file(self.doc_path, docs_dict)
-
         for word in stemmed_words:
-            if word in words_dict.keys():
-                for doc in words_dict[word]:
+            if word in self.words_dict.keys():
+                for doc in self.words_dict[word]:
                     scalar = 1
                     if self.is_pagerank:
-                        scalar = docs_dict[doc]
+                        scalar = self.docs_dict[doc]
                     if doc not in self.ids_to_scores.keys():
-                        self.ids_to_scores[doc] = words_dict[word][doc] * scalar
+                        self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
-                        self.ids_to_scores[doc] += words_dict[word][doc] * scalar           
+                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar           
 
     def get_final_results(self):
-        titles_dict = {}
-        io.read_title_file(self.title_path, titles_dict)
         sorted_docs = sorted(self.ids_to_scores.items(), key=lambda x: x[1], reverse=True)
-        for i in range(10):
+
+        i = 0
+        while i <= 10 and i < len(sorted_docs):
             doc_title = sorted_docs[i][0]
-            print(titles_dict[doc_title])
+            print(self.titles_dict[doc_title])
+            i += 1
 
-        #return sorted(self.ids_to_scores.items(), key=lambda x: x[1], reverse=True)
+if __name__ == "__main__":
+    while True:
+        user_text = input("Please enter your query (or type :quit to leave the program): ")
+        if user_text == ":quit":
+            break
 
-                                      
+        if sys.argv[1] == "--pagerank":
+            querier = Querier(sys.argv[2], sys.argv[3], sys.argv[4], True)
+        else:
+            querier = Querier(sys.argv[1], sys.argv[2], sys.argv[3])
+        querier.start_querying(user_text)
