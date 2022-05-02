@@ -21,7 +21,6 @@ class Indexer:
         self.words_path = words_path
 
         self.titles_to_ids = {}
-        self.pagerank_weights = {}
         self.ids_to_links = {}
         self.ids_to_titles = {}
 
@@ -148,51 +147,18 @@ class Indexer:
                 if "|" in word:
                     splitted_word = word.split("|")
                     link_to_add = splitted_word[0]
-
-                    # Special Case where the character after | is a space.
-                    if splitted_word[1].strip() != "":
-                        words_in_link = splitted_word[1].strip().split(" ")
-
-                        # DEBUG EMPTY CHARACTER
-                        if "" in words_in_link:
-                            print("see line 120, 121")
-                            print("word is: " + splitted_word[1].strip())
-
-                        cleaned_list.extend(self.tokenize_text(splitted_word[1].strip()))
-
+                    cleaned_list.extend(self.tokenize_text(splitted_word[1].strip()))
                 else:
                     link_to_add = word
-                    #words_list[i] = word
                     if ":" in word:
                         split_word = word.split(":")
-
-                        # DEBUG EMPTY CHARACTER
-                        if "" in split_word[0].strip().split(" "):
-                            print("see line 132, 133")
-                            print("word is: " + split_word[0])
-                        if "" in split_word[1].strip().split(" "):
-                            print("see line 134, 135")
-
-                        #cleaned_list.extend(split_word[0].strip().split(" "))
-                        #cleaned_list.extend(split_word[1].strip().split(" "))
-
                         cleaned_list.extend(self.tokenize_text(split_word[0].strip()))
                         cleaned_list.extend(self.tokenize_text(split_word[1].strip()))
                     else:
-
-                        # DEBUG EMPTY CHARACTER
-                        if "" in word.strip().split(" "):
-                            print("see line 141!")
-                            print("word is: " + word)
-
-                        #cleaned_list.extend(word.strip().split(" "))
                         cleaned_list.extend(self.tokenize_text(word.strip()))
                 self.add_pagerank_link(page_id, link_to_add)
             else:
                 cleaned_list.append(word)
-
-            #cleaned_list = [e for e in cleaned_list if e != ""]
-
         return cleaned_list
 
     def is_link(self, input_str):
@@ -220,15 +186,12 @@ class Indexer:
         n_k = len(self.ids_to_links[page_id])
 
         if page_id == link_id:
-            self.pagerank_weights[str(page_id) + " " + str(link_id)] = EPSILON/n
             return EPSILON/n
         elif link_id not in self.ids_to_links[page_id] and n_k != 0:
-            self.pagerank_weights[str(page_id) + " " + str(link_id)] = EPSILON/n
             return EPSILON/n
         else:
             if n_k == 0:
                 n_k = n - 1
-            self.pagerank_weights[str(page_id) + " " + str(link_id)] = (EPSILON/n) + (1 - EPSILON)*(1/n_k)
             return (EPSILON/n) + (1 - EPSILON)*(1/n_k)
 
     def compute_pagerank_scores(self):

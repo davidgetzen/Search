@@ -1,0 +1,48 @@
+<xml>
+  <page>
+    <title>
+      Computer Science
+    </title>
+    <id>
+      1
+    </id>
+    <text>
+      CS is all about fast [[Mathematics|Philosophy]].
+    </text>
+  </page>
+  <page>
+    <title>
+	  Mathematics
+	</title>
+	<id>
+	  2
+	</id>
+	<text>
+      Mathematics is such an awesome discipline. Many disciplines, like [[Ancient Greece|Computer Science]],
+      depend heavily on important theorems. 
+	</text>
+  </page>
+  <page>
+    <title>
+	  Philosophy
+	</title>
+	<id>
+	  3
+	</id>
+	<text>
+      [[Computer Science|Ancient Greece]] and philosophy are highly related.
+	</text>
+  </page>
+  <page>
+    <title>
+	  Ancient Greece
+	</title>
+	<id>
+	  4
+	</id>
+	<text>
+      Remarkable figures include [[Mathematics|Ancient Greece]], or Aristotle.
+	</text>
+  </page>
+
+</xml>

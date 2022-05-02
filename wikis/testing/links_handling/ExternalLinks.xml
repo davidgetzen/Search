@@ -7,13 +7,13 @@
       1
     </id>
     <text>
-      A major STEM field is [[Category:Computer Science]]
-      Another one is, not surprinsingly, [[Category:Mathematics]]
+      A major STEM field is [[Physics]]
+      Another one is, not surprinsingly, [[Mathematics]]
     </text>
   </page>
   <page>
     <title>
-	  Category:Computer Science
+	  Computer Science
 	</title>
 	<id>
 	  2
@@ -35,19 +35,8 @@
 	</text>
   </page>
   <page>
-    <title>
-	  Python
-	</title>
-	<id>
-	  4
-	</id>
-	<text>
-      Python is pretty cool.
-	</text>
-  </page>
-  <page>
   <title>
-	  Category:Mathematics
+	  Category:Science figures
 	</title>
 	<id>
 	  4
