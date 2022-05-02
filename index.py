@@ -141,22 +141,22 @@ class index:
                 if link in self.ids_to_links[doc_id]:
                     if link in self.titles_to_ids.keys():
                         ids_to_links_ids[doc_id].add(self.titles_to_ids[link])
+            #if len(ids_to_links_ids[doc_id]):
+                #ids_to_links_ids.add(d)           
         self.ids_to_links = ids_to_links_ids
 
 
     def get_pagerank_weight(self, page_id, link_id):
         n = len(self.titles_to_ids)
+        n_k = len(self.ids_to_links[page_id])
 
-        if link_id in self.ids_to_links[page_id]:
-            n_k = len(self.ids_to_links[page_id])
-
-            # Case where a page links to nothing.
-            # We consider that it links to everything, except itself.
-            if n_k == 0:
+        if link_id in self.ids_to_links[page_id] or n_k == 0:
+            if n_k == 0: 
                 n_k = n - 1
-
-            return EPSILON/n + (1 - EPSILON)*(1/n_k)
+            self.pagerank_weights[str(page_id) + " " + str(link_id)] = (EPSILON/n) + (1 - EPSILON)*(1/n_k)
+            return (EPSILON/n) + (1 - EPSILON)*(1/n_k)
         else:
+            self.pagerank_weights[str(page_id) + " " + str(link_id)] = EPSILON/n
             return EPSILON/n
 
     def compute_pagerank_scores(self):
@@ -164,6 +164,7 @@ class index:
         r_f = {}
 
         n = len(self.titles_to_ids)
+        #n = 2
 
         # Initializing values in r and r'
         for id in self.ids_to_links.keys():
@@ -178,7 +179,7 @@ class index:
                     r_f[page_j] = r_f[page_j] + self.get_pagerank_weight(page_i, page_j) \
                          * r_i[page_i]
 
-        return r_f                 
+        return r_f.copy()           
 
     def euclidean_distance(self, r_i, r_f):
         total_sum = 0

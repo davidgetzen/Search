@@ -13,6 +13,7 @@ class Querier:
         self.title_path = title_path
         self.doc_path = doc_path
         self.word_path = word_path
+        self.is_pagerank = is_pagerank
 
         self.ids_to_scores = {}
 
@@ -37,16 +38,27 @@ class Querier:
         return [the_stemmer.stem(word) for word in words]
 
     def score_docs(self, stemmed_words):
-        read_dict = {}
+        words_dict = {}
+        docs_dict = {}
 
-        io.read_words_file(self.word_path, read_dict)
+        io.read_words_file(self.word_path, words_dict)
+        io.read_docs_file(self.doc_path, docs_dict)
+
         for word in stemmed_words:
-            if word in read_dict.keys():
-                for doc in read_dict[word]:
+            if word in words_dict.keys():
+                for doc in words_dict[word]:
                     if doc not in self.ids_to_scores.keys():
-                        self.ids_to_scores[doc] = read_dict[word][doc]
+                        if self.is_pagerank:
+                            self.ids_to_scores[doc] = words_dict[word][doc] \
+                                * docs_dict[doc]
+                        else:
+                            self.ids_to_scores[doc] = words_dict[word][doc]
                     else:
-                        self.ids_to_scores[doc] += read_dict[word][doc]
+                        if self.is_pagerank:
+                            self.ids_to_scores[doc] += words_dict[word][doc] \
+                                * docs_dict[doc]
+                        else:
+                            self.ids_to_scores[doc] += words_dict[word][doc]        
 
     def get_final_results(self):
         titles_dict = {}
