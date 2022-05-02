@@ -1,6 +1,7 @@
 from math import log, sqrt
 import re
 import xml.etree.ElementTree as et
+import sys
 
 import file_io
 from nltk.corpus import stopwords
@@ -12,6 +13,7 @@ DELTA = 0.001
 the_stemmer = PorterStemmer()
 
 class index:
+
     def __init__(self, data_path, title_path, words_path, docs_path):
         self.file_path = data_path
         self.title_path = title_path
@@ -22,6 +24,8 @@ class index:
         self.pagerank_weights = {}
         self.ids_to_links = {}
         self.ids_to_titles = {}
+
+        self.parse_xml()
 
     def parse_xml(self):
         root = et.parse(self.file_path).getroot()
@@ -221,3 +225,6 @@ class index:
         for page_id in r_i.keys():
             total_sum += (r_f[page_id] - r_i[page_id])**2
         return sqrt(total_sum)
+
+if __name__ == "__main__":
+    index(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

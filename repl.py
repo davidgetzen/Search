@@ -5,7 +5,7 @@ if __name__ == "__main__":
     #indexer = index("wikis/MedWiki.xml", "title_file.txt", "words_file.txt", "docs_file.txt")
     #indexer.parse_xml()
     querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt", True)
-    querier.start_querying("baseball")
+    querier.start_querying("lycée lyautey")
     
     # while True:
     # user_text = input("Please enter a string (or type :q to leave the program): ")
