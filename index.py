@@ -34,6 +34,7 @@ class Indexer:
         ids_to_words_to_counts = {}
         words_to_ids_to_tfs = {}
         words_to_ids_to_relevance = {}
+        ids_to_max_count = {}
 
         for page in all_pages:
 
@@ -48,18 +49,34 @@ class Indexer:
             page_text = page.find("text").text.strip().lower()
             page_words = self.get_page_words(page_text, page_id)
 
+
+
             # Populating ids_to_words_to_counts is done here.
             ids_to_words_to_counts[page_id] = {}
+            
+            max_count = 0
             for word in page_words:
                 if word not in ids_to_words_to_counts[page_id]:
                     ids_to_words_to_counts[page_id][word] = 1
                 else:
                     ids_to_words_to_counts[page_id][word] += 1
+                if ids_to_words_to_counts[page_id][word] > max_count:
+                    max_count = ids_to_words_to_counts[page_id][word]
+    
+            ids_to_max_count[page_id] = max_count
 
             # Term Frequencies Computations
-            a_j = max(
-                [pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
+            #all_pairs = [pair for pair in ids_to_words_to_counts[page_id].items()]
+            #if len(all_pairs) == 0:
+            #    a_j = 
+            #a_j = max(
+                #[pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
             for word in ids_to_words_to_counts[page_id].keys():
+                a_j = ids_to_max_count[page_id]
+
+                #if a_j == 0:
+                    #continue
+                
                 tf = (ids_to_words_to_counts[page_id][word])/a_j
 
                 if word not in words_to_ids_to_tfs.keys():
@@ -91,14 +108,14 @@ class Indexer:
         return text_tokens
 
     def remove_stop_words(self, words):
-        #return [word for word in words if word not in STOP_WORDS]
-        new_list = []
-        for word in words:
-            if len(word) == 1:
-                new_list.append(word)
-            elif word not in STOP_WORDS:
-                new_list.append(word)
-        return new_list                    
+        return [word for word in words if word not in STOP_WORDS]
+        #new_list = []
+        #for word in words:
+            #if len(word) == 1:
+                #new_list.append(word)
+            #elif word not in STOP_WORDS:
+                #new_list.append(word)
+        #return new_list                    
 
     def stem_words(self, words):
         return [the_stemmer.stem(word) for word in words]
