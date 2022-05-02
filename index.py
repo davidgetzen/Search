@@ -150,14 +150,17 @@ class index:
         n = len(self.titles_to_ids)
         n_k = len(self.ids_to_links[page_id])
 
-        if link_id in self.ids_to_links[page_id] or n_k == 0:
-            if n_k == 0: 
+        if page_id == link_id:
+            self.pagerank_weights[str(page_id) + " " + str(link_id)] = EPSILON/n
+            return EPSILON/n
+        elif link_id not in self.ids_to_links[page_id] and n_k != 0:
+            self.pagerank_weights[str(page_id) + " " + str(link_id)] = EPSILON/n
+            return EPSILON/n
+        else:
+            if n_k == 0:
                 n_k = n - 1
             self.pagerank_weights[str(page_id) + " " + str(link_id)] = (EPSILON/n) + (1 - EPSILON)*(1/n_k)
             return (EPSILON/n) + (1 - EPSILON)*(1/n_k)
-        else:
-            self.pagerank_weights[str(page_id) + " " + str(link_id)] = EPSILON/n
-            return EPSILON/n
 
     def compute_pagerank_scores(self):
         r_i = {}

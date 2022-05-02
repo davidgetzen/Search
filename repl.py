@@ -4,7 +4,7 @@ from query import Querier
 if __name__ == "__main__":
     indexer = index("wikis/PageRankExample3.xml", "title_file.txt", "words_file.txt", "docs_file.txt")
     indexer.parse_xml()
-    #querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt", True)
+    #querier = Querier("title_file.txt", "sdocs_file.txt", "words_file.txt", True)
     #querier.start_querying("Maroc Telecom")
     
     # while True:
