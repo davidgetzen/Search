@@ -12,13 +12,13 @@ EPSILON = 0.15
 DELTA = 0.001
 the_stemmer = PorterStemmer()
 
-class index:
+class Indexer:
 
-    def __init__(self, data_path, title_path, words_path, docs_path):
+    def __init__(self, data_path, title_path, docs_path, words_path):
         self.file_path = data_path
         self.title_path = title_path
-        self.words_path = words_path
         self.docs_path = docs_path
+        self.words_path = words_path
 
         self.titles_to_ids = {}
         self.pagerank_weights = {}
@@ -34,6 +34,7 @@ class index:
         ids_to_words_to_counts = {}
         words_to_ids_to_tfs = {}
         words_to_ids_to_relevance = {}
+        ids_to_max_count = {}
 
         for page in all_pages:
 
@@ -48,18 +49,34 @@ class index:
             page_text = page.find("text").text.strip().lower()
             page_words = self.get_page_words(page_text, page_id)
 
+
+
             # Populating ids_to_words_to_counts is done here.
             ids_to_words_to_counts[page_id] = {}
+            
+            max_count = 0
             for word in page_words:
                 if word not in ids_to_words_to_counts[page_id]:
                     ids_to_words_to_counts[page_id][word] = 1
                 else:
                     ids_to_words_to_counts[page_id][word] += 1
+                if ids_to_words_to_counts[page_id][word] > max_count:
+                    max_count = ids_to_words_to_counts[page_id][word]
+    
+            ids_to_max_count[page_id] = max_count
 
             # Term Frequencies Computations
-            a_j = max(
-                [pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
+            #all_pairs = [pair for pair in ids_to_words_to_counts[page_id].items()]
+            #if len(all_pairs) == 0:
+            #    a_j = 
+            #a_j = max(
+                #[pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
             for word in ids_to_words_to_counts[page_id].keys():
+                a_j = ids_to_max_count[page_id]
+
+                #if a_j == 0:
+                    #continue
+                
                 tf = (ids_to_words_to_counts[page_id][word])/a_j
 
                 if word not in words_to_ids_to_tfs.keys():
@@ -92,17 +109,33 @@ class index:
 
     def remove_stop_words(self, words):
         return [word for word in words if word not in STOP_WORDS]
+        #new_list = []
+        #for word in words:
+            #if len(word) == 1:
+                #new_list.append(word)
+            #elif word not in STOP_WORDS:
+                #new_list.append(word)
+        #return new_list                    
 
     def stem_words(self, words):
         return [the_stemmer.stem(word) for word in words]
+        # new_list = []
+        # for word in words:
+        #     if len(word) == 1:
+        #         new_list.append(word)
+        #     else:
+        #         new_list.append(the_stemmer.stem(word))    
+        # return new_list        
+
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
-        page_without_stop_words = self.remove_stop_words(page_tokens)
+        page_with_links_handled = self.handle_links(page_tokens, page_id)
+        page_without_stop_words = self.remove_stop_words(page_with_links_handled)
         page_with_stemmed_words = self.stem_words(page_without_stop_words)
         #page_with_stemmed_words = [word for word in self.stem_words(page_without_stop_words) if word != ""]
-        page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
-        return page_with_links_handled
+        #page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
+        return page_with_stemmed_words
         #return [word for word in page_with_links_handled if word != ""]
 
     def handle_links(self, words_list, page_id):
@@ -166,7 +199,7 @@ class index:
         return input_str[:2] == "[[" and input_str[len(input_str)-2:] == "]]"   
 
     def add_pagerank_link(self, current_id, linked_title):
-        if self.ids_to_titles[current_id] != linked_title:
+        if self.ids_to_titles[current_id].lower() != linked_title.lower():
             self.ids_to_links[current_id].append(linked_title)
 
     def filter_unvalid_links(self):
@@ -227,4 +260,4 @@ class index:
         return sqrt(total_sum)
 
 if __name__ == "__main__":
-    index(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
