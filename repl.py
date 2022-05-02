@@ -2,9 +2,9 @@ from index import index
 from query import Querier
 
 if __name__ == "__main__":
-    #indexer = index("wikis/MedWiki.xml", "title_file.txt", "words_file.txt", "docs_file.txt")
+    #indexer = index("wikis/PageRankExample3.xml", "title_file.txt", "words_file.txt", "docs_file.txt")
     #indexer.parse_xml()
-    querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt", False)
+    querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt", True)
     querier.start_querying("computer science")
     
     # while True:

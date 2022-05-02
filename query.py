@@ -47,18 +47,13 @@ class Querier:
         for word in stemmed_words:
             if word in words_dict.keys():
                 for doc in words_dict[word]:
+                    scalar = 1
+                    if self.is_pagerank:
+                        scalar = docs_dict[doc]
                     if doc not in self.ids_to_scores.keys():
-                        if self.is_pagerank:
-                            self.ids_to_scores[doc] = words_dict[word][doc] \
-                                * docs_dict[doc]
-                        else:
-                            self.ids_to_scores[doc] = words_dict[word][doc]
+                        self.ids_to_scores[doc] = words_dict[word][doc] * scalar
                     else:
-                        if self.is_pagerank:
-                            self.ids_to_scores[doc] += words_dict[word][doc] \
-                                * docs_dict[doc]
-                        else:
-                            self.ids_to_scores[doc] += words_dict[word][doc]        
+                        self.ids_to_scores[doc] += words_dict[word][doc] * scalar           
 
     def get_final_results(self):
         titles_dict = {}
