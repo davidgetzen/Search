@@ -34,11 +34,16 @@ def test_lower_upper():
 # REPL throw exceptions
 # All stop words
 # No stop words
+# Tests whether or not the 
 def test_all_stop_words():
     index_all_stops = Indexer("wikis/FirstTestXML.xml", "title_file.txt",
                          "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
+    index_all_stops.ids_to_words_to_counts
+    for word in testing_dict.keys():
+        assert testing_dict[word][1] == 0.0
+    
 
     
     
