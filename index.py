@@ -14,11 +14,11 @@ the_stemmer = PorterStemmer()
 
 class index:
 
-    def __init__(self, data_path, title_path, words_path, docs_path):
+    def __init__(self, data_path, title_path, docs_path, words_path):
         self.file_path = data_path
         self.title_path = title_path
-        self.words_path = words_path
         self.docs_path = docs_path
+        self.words_path = words_path
 
         self.titles_to_ids = {}
         self.pagerank_weights = {}
@@ -98,11 +98,12 @@ class index:
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
-        page_without_stop_words = self.remove_stop_words(page_tokens)
+        page_with_links_handled = self.handle_links(page_tokens, page_id)
+        page_without_stop_words = self.remove_stop_words(page_with_links_handled)
         page_with_stemmed_words = self.stem_words(page_without_stop_words)
         #page_with_stemmed_words = [word for word in self.stem_words(page_without_stop_words) if word != ""]
-        page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
-        return page_with_links_handled
+        #page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
+        return page_with_stemmed_words
         #return [word for word in page_with_links_handled if word != ""]
 
     def handle_links(self, words_list, page_id):
