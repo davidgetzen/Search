@@ -1,8 +1,8 @@
-from index import index
+from index import Indexer
 from query import Querier
 
 if __name__ == "__main__":
-    indexer = index("wikis/PageRankExample2.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/PageRankExample2.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
     indexer.parse_xml()
     #querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt", True)
     #querier.start_querying("lycée lyautey")

@@ -12,7 +12,7 @@ EPSILON = 0.15
 DELTA = 0.001
 the_stemmer = PorterStemmer()
 
-class index:
+class Indexer:
 
     def __init__(self, data_path, title_path, docs_path, words_path):
         self.file_path = data_path
@@ -91,10 +91,25 @@ class index:
         return text_tokens
 
     def remove_stop_words(self, words):
-        return [word for word in words if word not in STOP_WORDS]
+        #return [word for word in words if word not in STOP_WORDS]
+        new_list = []
+        for word in words:
+            if len(word) == 1:
+                new_list.append(word)
+            elif word not in STOP_WORDS:
+                new_list.append(word)
+        return new_list                    
 
     def stem_words(self, words):
         return [the_stemmer.stem(word) for word in words]
+        # new_list = []
+        # for word in words:
+        #     if len(word) == 1:
+        #         new_list.append(word)
+        #     else:
+        #         new_list.append(the_stemmer.stem(word))    
+        # return new_list        
+
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
@@ -228,4 +243,4 @@ class index:
         return sqrt(total_sum)
 
 if __name__ == "__main__":
-    index(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
