@@ -82,7 +82,6 @@ class index:
 
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
-        #n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+|""'''
         text_tokens = re.findall(n_regex, text)
         return text_tokens
 
@@ -130,7 +129,7 @@ class index:
         return input_str[:2] == "[[" and input_str[len(input_str)-2:] == "]]"   
 
     def add_pagerank_link(self, current_id, linked_title):
-        if self.ids_to_titles[current_id].lower() != linked_title.lower():
+        if self.ids_to_titles[current_id] != linked_title:
             self.ids_to_links[current_id].append(linked_title)
 
     def filter_unvalid_links(self):
