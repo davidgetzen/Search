@@ -1,0 +1,35 @@
+<xml>
+  <page>
+    <title>
+      Page 1
+    </title>
+    <id>
+      1
+    </id>
+    <text>
+      the a an in
+    </text>
+  </page>
+  <page>
+    <title>
+	  Page 2
+	</title>
+	<id>
+	  2
+	</id>
+	<text>
+      hello this is a stupid text.
+	</text>
+  </page>
+  <page>
+    <title>
+	  Page 3
+	</title>
+	<id>
+	  3
+	</id>
+	<text>
+      cheese is awesome.
+	</text>
+  </page>
+</xml>
