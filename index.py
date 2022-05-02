@@ -83,6 +83,7 @@ class index:
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
         text_tokens = re.findall(n_regex, text)
+        #text_tokens = [token for token in re.findall(n_regex, text) if token not in ["", "\n", " ", "\0"]]
         return text_tokens
 
     def remove_stop_words(self, words):
@@ -95,8 +96,10 @@ class index:
         page_tokens = self.tokenize_text(page_text)
         page_without_stop_words = self.remove_stop_words(page_tokens)
         page_with_stemmed_words = self.stem_words(page_without_stop_words)
+        #page_with_stemmed_words = [word for word in self.stem_words(page_without_stop_words) if word != ""]
         page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
         return page_with_links_handled
+        #return [word for word in page_with_links_handled if word != ""]
 
     def handle_links(self, words_list, page_id):
         cleaned_list = []
@@ -109,20 +112,50 @@ class index:
                     splitted_word = word.split("|")
                     link_to_add = splitted_word[0]
 
-                    words_in_link = splitted_word[1].split(" ")
-                    cleaned_list.extend(words_in_link)
+                    # Special Case where the character after | is a space.
+                    if splitted_word[1].strip() != "":
+                        words_in_link = splitted_word[1].strip().split(" ")
+
+                        # DEBUG EMPTY CHARACTER
+                        if "" in words_in_link:
+                            print("see line 120, 121")
+                            print("word is: " + splitted_word[1].strip())
+
+                        cleaned_list.extend(self.tokenize_text(splitted_word[1].strip()))
+
                 else:
                     link_to_add = word
                     #words_list[i] = word
                     if ":" in word:
                         split_word = word.split(":")
-                        cleaned_list.extend(split_word[0].split(" "))
-                        cleaned_list.extend(split_word[1].split(" "))
+
+                        # DEBUG EMPTY CHARACTER
+                        if "" in split_word[0].strip().split(" "):
+                            print("see line 132, 133")
+                            print("word is: " + split_word[0])
+                        if "" in split_word[1].strip().split(" "):
+                            print("see line 134, 135")
+
+                        #cleaned_list.extend(split_word[0].strip().split(" "))
+                        #cleaned_list.extend(split_word[1].strip().split(" "))
+
+                        cleaned_list.extend(self.tokenize_text(split_word[0].strip()))
+                        cleaned_list.extend(self.tokenize_text(split_word[1].strip()))
                     else:
-                        cleaned_list.extend(word.split(" "))
+
+                        # DEBUG EMPTY CHARACTER
+                        if "" in word.strip().split(" "):
+                            print("see line 141!")
+                            print("word is: " + word)
+
+                        #cleaned_list.extend(word.strip().split(" "))
+                        cleaned_list.extend(self.tokenize_text(word.strip()))
                 self.add_pagerank_link(page_id, link_to_add)
             else:
                 cleaned_list.append(word)
+
+            #cleaned_list = [e for e in cleaned_list if e != ""]
+
         return cleaned_list
 
     def is_link(self, input_str):
