@@ -45,12 +45,12 @@ class Querier:
 
     def score_docs(self, stemmed_words):
         for word in stemmed_words:
-            if word in self.words_dict.keys():
+            if word in self.words_dict:
                 for doc in self.words_dict[word]:
                     scalar = 1
                     if self.is_pagerank:
                         scalar = self.docs_dict[doc]
-                    if doc not in self.ids_to_scores.keys():
+                    if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
                         self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar           

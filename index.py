@@ -199,7 +199,7 @@ class Indexer:
         return input_str[:2] == "[[" and input_str[len(input_str)-2:] == "]]"   
 
     def add_pagerank_link(self, current_id, linked_title):
-        if self.ids_to_titles[current_id] != linked_title:
+        if self.ids_to_titles[current_id].lower() != linked_title.lower():
             self.ids_to_links[current_id].append(linked_title)
 
     def filter_unvalid_links(self):
