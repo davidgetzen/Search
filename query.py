@@ -45,7 +45,7 @@ class Querier:
                 for doc in self.words_dict[word]:
                     scalar = 1
                     if self.is_pagerank:
-                        scalar = round(self.docs_dict[doc], 4)
+                        scalar = self.docs_dict[doc]
                     if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
