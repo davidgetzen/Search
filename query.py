@@ -7,12 +7,13 @@ import sys
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
 
+
 class Querier:
     def __init__(self, title_path, doc_path, word_path, is_pagerank=False):
         self.is_pagerank = is_pagerank
 
         self.titles_dict = {}
-        io.read_title_file(title_path, self.titles_dict) 
+        io.read_title_file(title_path, self.titles_dict)
 
         self.words_dict = {}
         io.read_words_file(word_path, self.words_dict)
@@ -21,6 +22,7 @@ class Querier:
         io.read_docs_file(doc_path, self.docs_dict)
 
         self.ids_to_scores = {}
+        self.figure_out = []
 
     def start_querying(self, query_text):
         words = self.get_query_words(query_text)
@@ -53,20 +55,22 @@ class Querier:
                     if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
-                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar      
+                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar
 
     def get_final_results(self):
-        sorted_docs = sorted(self.ids_to_scores.items(), key=lambda x: x[1], reverse=True)
-
+        sorted_docs = sorted(self.ids_to_scores.items(),
+                             key=lambda x: x[1], reverse=True)
         i = 0
         while i <= 10 and i < len(sorted_docs):
             doc_title = sorted_docs[i][0]
             print(self.titles_dict[doc_title])
             i += 1
 
+
 if __name__ == "__main__":
     while True:
-        user_text = input("Please enter your query (or type :quit to leave the program): ")
+        user_text = input(
+            "Please enter your query (or type :quit to leave the program): ")
         if user_text == ":quit":
             break
 
