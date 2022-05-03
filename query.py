@@ -7,6 +7,7 @@ import sys
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
 
+
 class Querier:
     def __init__(self, titles_dict, docs_dict, words_dict, is_pagerank=False):
         self.is_pagerank = is_pagerank
@@ -14,6 +15,7 @@ class Querier:
         self.docs_dict = docs_dict
         self.words_dict = words_dict
         self.ids_to_scores = {}
+        self.figure_out = []
 
     def start_querying(self, query_text):
         self.ids_to_scores = {}
@@ -50,13 +52,14 @@ class Querier:
                         self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar
 
     def get_final_results(self):
-        sorted_docs = sorted(self.ids_to_scores.items(), key=lambda x: x[1], reverse=True)
-
+        sorted_docs = sorted(self.ids_to_scores.items(),
+                             key=lambda x: x[1], reverse=True)
         i = 0
         while i < 10 and i < len(sorted_docs):
             doc_title = sorted_docs[i][0]
             print(self.titles_dict[doc_title])
             i += 1
+
 
 def read_files(title_path, doc_path, word_path):
 
@@ -64,7 +67,7 @@ def read_files(title_path, doc_path, word_path):
     docs_dict = {}
     words_dict = {}
 
-    io.read_title_file(title_path, titles_dict) 
+    io.read_title_file(title_path, titles_dict)
     io.read_docs_file(doc_path, docs_dict)
     io.read_words_file(word_path, words_dict)
 
@@ -83,10 +86,11 @@ if __name__ == "__main__":
         print("File " + e.filename + " was not found.")
         exit()
 
-    querier =  Querier(dicts[0], dicts[1], dicts[2], is_pagerank)           
+    querier = Querier(dicts[0], dicts[1], dicts[2], is_pagerank)
 
     while True:
-        user_text = input("Please enter your query (or type :quit to leave the program): ")
+        user_text = input(
+            "Please enter your query (or type :quit to leave the program): ")
         if user_text == ":quit":
             break
         querier.start_querying(user_text)
