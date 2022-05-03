@@ -1,4 +1,3 @@
-from pydoc import pager
 import pytest
 from index import Indexer
 import query
@@ -9,7 +8,6 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
-
 
 
 def test_indexer_page_no_text(): 
@@ -262,7 +260,7 @@ def test_indexer_links_pipe_confusing():
 # (special characters, empty spaces...).
 # This test is designed to make sure the program handles these cases correctly, by adding the correct words
 # to the corpus of words and ignoring special characters.
-def test_indexer_links_pipe_weird_characters():
+def test_indexer_links_pipe_special_characters():
     indexer = Indexer("wikis/testing/links_handling/LinksWithPipesSpecial.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
 
     expected_links = {
@@ -312,6 +310,27 @@ def test_indexer_meta_links():
     assert indexer.ids_to_links == expected_links
     for x in expected_words:
         assert x in actual_words.keys()
+
+# Makes sure that references to links are stripped and words are correctly added to the corpus.
+def test_indexer_meta_links_spaces():
+    indexer = Indexer("wikis/testing/links_handling/MetaPagesSpace.xml", "title_file.txt", "docs_file.txt", "words_file.txt") 
+
+    expected_links = {
+        1: {2, 4},
+        2: {3, 4},
+        3: set(),
+        4: set()
+    }
+
+    words_in_links = ["Category", "Computer", "Science", "Mathematics"]
+    expected_words = stem_words(remove_stop_words(words_in_links))
+
+    actual_words = {}
+    file_io.read_words_file("words_file.txt", actual_words)
+
+    assert indexer.ids_to_links == expected_links
+    for x in expected_words:
+        assert x in actual_words.keys()   
 
 
 
@@ -460,9 +479,11 @@ def test_pagerank_small_wiki_adds_up_to_1():
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
     sum = 0
+    i = 0
     for rank in pagerank_scores.values():
         sum += rank
-    assert sum == pytest.approx(1) 
+        i += 1
+    assert sum == pytest.approx(1)
     
 
 

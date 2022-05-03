@@ -156,7 +156,7 @@ class Indexer:
                         cleaned_list.extend(self.tokenize_text(split_word[1].strip()))
                     else:
                         cleaned_list.extend(self.tokenize_text(word.strip()))
-                self.add_pagerank_link(page_id, link_to_add)
+                self.add_pagerank_link(page_id, link_to_add.strip())
             else:
                 cleaned_list.append(word)
         return cleaned_list
