@@ -332,106 +332,6 @@ def test_indexer_meta_links_spaces():
     for x in expected_words:
         assert x in actual_words.keys()   
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#def test_pagerank_weights_metapages():
-#    indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-#    expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.0375, 0.0375, 0.8875, 0.0375], \
-#        [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
-#    for i in range(1, 5):
-#        for j in range(1, 5):
-#            indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
-
-
-# def test_indexer_ignore_external_links():
-#     indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-
-#     expected_links = {
-#         1: set(),
-#         2: {3},
-#         3: set(),
-#         4: set()
-#     }
-
-#     # Words in links that are ignored - makes sure that they are considered in the corpus of words.
-#     words_in_links = ["Mathematics", "Physics", "Python", "Gauss", "Fermat", "Newton"]
-#     expected_words = stem_words(remove_stop_words(words_in_links))
-
-#     actual_words = {}
-#     file_io.read_words_file("words_file.txt", actual_words)
-
-#     assert indexer.ids_to_links == expected_links
-#     for x in expected_words:
-#         assert x in actual_words.keys()
-
-# def test_pagerank_weights_ignore_external_links():
-#     indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-#     expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.0375, 0.0375, 0.8875, 0.0375], \
-#         [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
-#     for i in range(1, 5):
-#         for j in range(1, 5):
-#             indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def test_pagerank_scores_examples():
 
     # PageRankExample1.xml
@@ -473,7 +373,6 @@ def test_pagerank_scores_examples():
     assert pagerank_scores[3] == pytest.approx(0.4625, 0.001)
     assert pagerank_scores[4] == pytest.approx(0.4625, 0.001)
 
-
 def test_pagerank_small_wiki_adds_up_to_1():
     Indexer("wikis/SmallWiki.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
@@ -485,37 +384,6 @@ def test_pagerank_small_wiki_adds_up_to_1():
         i += 1
     assert sum == pytest.approx(1)
     
-
-
-
-    
-
-
-    
-
-
-
-# Query not in any documents/Empty Query
-# Same relevance scores
-# Same pagerank&relevance scores
-# Page linking to itself -> nothing -> all other pages
-# Link with pipe
-# Meta-Link recognition
-# Page with two pages linking it vs. page with one page linking it -
-# influence on rank of linked doc
-# All pages link to themselves/nothing
-# Page with no text
-# Two pages with the same title?
-# A wordlist of only stop words (return an empty list)
-# A wordlist of no stop words (return identical list)
-# If [[Link | Word]] and Word are in same text, make sure Word is counted twice
-# Removing stop words from the textual representations of links
-
-
-# test_query = query.Querier("title_file.txt",
-#                            "words_file.txt", "docs_file.txt")
-# test_query.start_querying("computer science")
-
 def remove_stop_words(words):
     return [word for word in words if word not in STOP_WORDS]            
 
