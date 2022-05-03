@@ -90,4 +90,3 @@ if __name__ == "__main__":
         if user_text == ":quit":
             break
         querier.start_querying(user_text)
-

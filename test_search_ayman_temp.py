@@ -404,3 +404,13 @@ def remove_stop_words(words):
 
 def stem_words(words):
     return [the_stemmer.stem(word).lower() for word in words]
+
+def test_hammad_weights():
+    Indexer("wikis/HammadXML.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/HammadXML.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    expected_weights = [[0.05, 0.475, 0.475], [0.475, 0.05, 0.475], \
+        [0.9, 0.05, 0.05]]
+    for i in range(1, 4):
+        for j in range(1, 4):
+            #print(str(i) + " " + str(j) + " " + str(indexer.get_pagerank_weight(i, j)))
+            assert indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001)
