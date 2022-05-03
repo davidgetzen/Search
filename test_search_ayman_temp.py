@@ -332,6 +332,23 @@ def test_indexer_meta_links_spaces():
     for x in expected_words:
         assert x in actual_words.keys()   
 
+# """
+# ----------------------------------------------------------
+# PARSING - DOES COUNT WORDS IN LINKS AS OTHER WORDS IN TEXT
+# ----------------------------------------------------------
+# """
+# # Makes sure that one word is counted twice, even if one of the instances is in a link.
+# # To do so, the program compares the relevance scores
+# def test_indexer_multiple_counts_links():
+#     Indexer("wikis/testing/links_handling/MultipleCountsLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+#     word_relevances = {}
+#     file_io.read_words_file("words_file.txt", word_relevances)
+
+#     stemmed_math = stem_words(["mathematics"])[0]
+#     print(word_relevances[stemmed_math])
+
+#     #assert word_relevances[stemmed_math] > word_relevances[stemmed_math][2]
+
 def test_pagerank_scores_examples():
 
     # PageRankExample1.xml
@@ -378,10 +395,8 @@ def test_pagerank_small_wiki_adds_up_to_1():
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
     sum = 0
-    i = 0
     for rank in pagerank_scores.values():
         sum += rank
-        i += 1
     assert sum == pytest.approx(1)
     
 def remove_stop_words(words):

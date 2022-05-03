@@ -223,4 +223,8 @@ class Indexer:
         return sqrt(total_sum)
 
 if __name__ == "__main__":
-    Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    try:
+        Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    except TypeError:
+        print("Too many arguments were given. Please try again with the correct number of arguments.")
+        
