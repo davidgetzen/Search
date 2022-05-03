@@ -9,22 +9,16 @@ the_stemmer = PorterStemmer()
 
 
 class Querier:
-    def __init__(self, title_path, doc_path, word_path, is_pagerank=False):
+    def __init__(self, titles_dict, docs_dict, words_dict, is_pagerank=False):
         self.is_pagerank = is_pagerank
-
-        self.titles_dict = {}
-        io.read_title_file(title_path, self.titles_dict)
-
-        self.words_dict = {}
-        io.read_words_file(word_path, self.words_dict)
-
-        self.docs_dict = {}
-        io.read_docs_file(doc_path, self.docs_dict)
-
+        self.titles_dict = titles_dict
+        self.docs_dict = docs_dict
+        self.words_dict = words_dict
         self.ids_to_scores = {}
         self.figure_out = []
 
     def start_querying(self, query_text):
+        self.ids_to_scores = {}
         words = self.get_query_words(query_text)
         self.score_docs(words)
 
@@ -51,7 +45,7 @@ class Querier:
                 for doc in self.words_dict[word]:
                     scalar = 1
                     if self.is_pagerank:
-                        scalar = self.docs_dict[doc]
+                        scalar = round(self.docs_dict[doc], 4)
                     if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
@@ -61,21 +55,58 @@ class Querier:
         sorted_docs = sorted(self.ids_to_scores.items(),
                              key=lambda x: x[1], reverse=True)
         i = 0
-        while i <= 10 and i < len(sorted_docs):
+        while i < 10 and i < len(sorted_docs):
             doc_title = sorted_docs[i][0]
             print(self.titles_dict[doc_title])
             i += 1
 
 
+<< << << < HEAD
+== == == =
+
+
+def read_files(title_path, doc_path, word_path):
+
+    titles_dict = {}
+    docs_dict = {}
+    words_dict = {}
+
+    io.read_title_file(title_path, titles_dict)
+    io.read_docs_file(doc_path, docs_dict)
+    io.read_words_file(word_path, words_dict)
+
+    return [titles_dict, docs_dict, words_dict]
+
+
+>>>>>> > c927b8c616aa3863c78fa6c4933d728c068df2a5
+
 if __name__ == "__main__":
+
+    is_pagerank = sys.argv[1] == "--pagerank"
+
+    try:
+        if is_pagerank:
+            dicts = read_files(sys.argv[2], sys.argv[3], sys.argv[4])
+        else:
+            dicts = read_files(sys.argv[1], sys.argv[2], sys.argv[3])
+    except FileNotFoundError as e:
+        print("File " + e.filename + " was not found.")
+        exit()
+
+    querier = Querier(dicts[0], dicts[1], dicts[2], is_pagerank)
+
     while True:
         user_text = input(
             "Please enter your query (or type :quit to leave the program): ")
         if user_text == ":quit":
             break
-
-        if sys.argv[1] == "--pagerank":
-            querier = Querier(sys.argv[2], sys.argv[3], sys.argv[4], True)
-        else:
-            querier = Querier(sys.argv[1], sys.argv[2], sys.argv[3])
         querier.start_querying(user_text)
+
+<< << << < HEAD
+   if sys.argv[1] == "--pagerank":
+        querier = Querier(sys.argv[2], sys.argv[3], sys.argv[4], True)
+    else:
+        querier = Querier(sys.argv[1], sys.argv[2], sys.argv[3])
+    querier.start_querying(user_text)
+== =====
+>>>>>> > c927b8c616aa3863c78fa6c4933d728c068df2a5

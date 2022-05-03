@@ -10,7 +10,6 @@ STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
 
 
-
 def test_indexer_page_no_text(): 
     index_empty_page = Indexer("wikis/EmptyPageTest.xml", "title_file.txt",
                          "docs_file.txt", "words_file.txt")
@@ -217,7 +216,7 @@ def test_pagerank_scores_ignore_then_empty():
 
 """
 ---------------------------
-PIPES TESTS
+PARSING LINKS - PIPES
 ---------------------------
 """
 
@@ -257,6 +256,40 @@ def test_indexer_links_pipe_confusing():
 
     assert indexer.ids_to_links == expected_links
 
+# We have encountered a very annoying bug when dealing with links that had weird characters after |
+# (special characters, empty spaces...).
+# This test is designed to make sure the program handles these cases correctly, by adding the correct words
+# to the corpus of words and ignoring special characters.
+def test_indexer_links_pipe_special_characters():
+    indexer = Indexer("wikis/testing/links_handling/LinksWithPipesSpecial.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+
+    expected_links = {
+        1: {2},
+        2: {1},
+        3: {2},
+        4: {3}
+    }
+
+    # These words were ONLY apparent to the right of the pipe.
+    words_in_links = ["Calculus", "Socrates", "CS"]
+    special_characters_in_words = ["$", "/", " ", "", "%"]
+    expected_words = stem_words(remove_stop_words(words_in_links))
+
+    actual_words = {}
+    file_io.read_words_file("words_file.txt", actual_words)
+
+    assert indexer.ids_to_links == expected_links
+    for x in expected_words:
+        assert x in actual_words
+    for y in special_characters_in_words:
+        assert y not in actual_words
+
+"""
+---------------------------
+PARSING LINKS - META LINKS
+---------------------------
+"""
+
 # Tests that the program does consider links to metapages and adds the text related to them correctly.
 def test_indexer_meta_links():
     indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
@@ -278,105 +311,43 @@ def test_indexer_meta_links():
     for x in expected_words:
         assert x in actual_words.keys()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def test_pagerank_weights_metapages():
-    indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-    expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.0375, 0.0375, 0.8875, 0.0375], \
-        [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
-    for i in range(1, 5):
-        for j in range(1, 5):
-            indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
-
-
-# def test_indexer_ignore_external_links():
-#     indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-
-#     expected_links = {
-#         1: set(),
-#         2: {3},
-#         3: set(),
-#         4: set()
-#     }
-
-#     # Words in links that are ignored - makes sure that they are considered in the corpus of words.
-#     words_in_links = ["Mathematics", "Physics", "Python", "Gauss", "Fermat", "Newton"]
-#     expected_words = stem_words(remove_stop_words(words_in_links))
-
-#     actual_words = {}
-#     file_io.read_words_file("words_file.txt", actual_words)
-
-#     assert indexer.ids_to_links == expected_links
-#     for x in expected_words:
-#         assert x in actual_words.keys()
-
-# def test_pagerank_weights_ignore_external_links():
-#     indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-#     expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.0375, 0.0375, 0.8875, 0.0375], \
-#         [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
-#     for i in range(1, 5):
-#         for j in range(1, 5):
-#             indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Makes sure that references to links are stripped and words are correctly added to the corpus.
+def test_indexer_meta_links_spaces():
+    indexer = Indexer("wikis/testing/links_handling/MetaPagesSpace.xml", "title_file.txt", "docs_file.txt", "words_file.txt") 
+
+    expected_links = {
+        1: {2, 4},
+        2: {3, 4},
+        3: set(),
+        4: set()
+    }
+
+    words_in_links = ["Category", "Computer", "Science", "Mathematics"]
+    expected_words = stem_words(remove_stop_words(words_in_links))
+
+    actual_words = {}
+    file_io.read_words_file("words_file.txt", actual_words)
+
+    assert indexer.ids_to_links == expected_links
+    for x in expected_words:
+        assert x in actual_words.keys()   
+
+# """
+# ----------------------------------------------------------
+# PARSING - DOES COUNT WORDS IN LINKS AS OTHER WORDS IN TEXT
+# ----------------------------------------------------------
+# """
+# # Makes sure that one word is counted twice, even if one of the instances is in a link.
+# # To do so, the program compares the relevance scores
+# def test_indexer_multiple_counts_links():
+#     Indexer("wikis/testing/links_handling/MultipleCountsLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+#     word_relevances = {}
+#     file_io.read_words_file("words_file.txt", word_relevances)
+
+#     stemmed_math = stem_words(["mathematics"])[0]
+#     print(word_relevances[stemmed_math])
+
+#     #assert word_relevances[stemmed_math] > word_relevances[stemmed_math][2]
 
 def test_pagerank_scores_examples():
 
@@ -419,40 +390,15 @@ def test_pagerank_scores_examples():
     assert pagerank_scores[3] == pytest.approx(0.4625, 0.001)
     assert pagerank_scores[4] == pytest.approx(0.4625, 0.001)
 
-
-
+def test_pagerank_small_wiki_adds_up_to_1():
+    Indexer("wikis/SmallWiki.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    pagerank_scores = {}
+    file_io.read_docs_file("docs_file.txt", pagerank_scores)
+    sum = 0
+    for rank in pagerank_scores.values():
+        sum += rank
+    assert sum == pytest.approx(1)
     
-
-
-
-    
-
-
-    
-
-
-
-# Query not in any documents/Empty Query
-# Same relevance scores
-# Same pagerank&relevance scores
-# Page linking to itself -> nothing -> all other pages
-# Link with pipe
-# Meta-Link recognition
-# Page with two pages linking it vs. page with one page linking it -
-# influence on rank of linked doc
-# All pages link to themselves/nothing
-# Page with no text
-# Two pages with the same title?
-# A wordlist of only stop words (return an empty list)
-# A wordlist of no stop words (return identical list)
-# If [[Link | Word]] and Word are in same text, make sure Word is counted twice
-# Removing stop words from the textual representations of links
-
-
-# test_query = query.Querier("title_file.txt",
-#                            "words_file.txt", "docs_file.txt")
-# test_query.start_querying("computer science")
-
 def remove_stop_words(words):
     return [word for word in words if word not in STOP_WORDS]            
 

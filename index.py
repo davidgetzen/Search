@@ -156,7 +156,7 @@ class Indexer:
                         cleaned_list.extend(self.tokenize_text(split_word[1].strip()))
                     else:
                         cleaned_list.extend(self.tokenize_text(word.strip()))
-                self.add_pagerank_link(page_id, link_to_add)
+                self.add_pagerank_link(page_id, link_to_add.strip())
             else:
                 cleaned_list.append(word)
         return cleaned_list
@@ -223,4 +223,8 @@ class Indexer:
         return sqrt(total_sum)
 
 if __name__ == "__main__":
-    Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    try:
+        Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    except TypeError:
+        print("Too many arguments were given. Please try again with the correct number of arguments.")
+        
