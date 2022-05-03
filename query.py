@@ -49,17 +49,17 @@ class Querier:
                 for doc in self.words_dict[word]:
                     scalar = 1
                     if self.is_pagerank:
-                        scalar = self.docs_dict[doc]
+                        scalar = round(self.docs_dict[doc], 4)
                     if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
-                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar      
+                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar
 
     def get_final_results(self):
         sorted_docs = sorted(self.ids_to_scores.items(), key=lambda x: x[1], reverse=True)
 
         i = 0
-        while i <= 10 and i < len(sorted_docs):
+        while i < 10 and i < len(sorted_docs):
             doc_title = sorted_docs[i][0]
             print(self.titles_dict[doc_title])
             i += 1

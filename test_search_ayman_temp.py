@@ -1,3 +1,4 @@
+from pydoc import pager
 import pytest
 from index import Indexer
 import query
@@ -217,7 +218,7 @@ def test_pagerank_scores_ignore_then_empty():
 
 """
 ---------------------------
-PIPES TESTS
+PARSING LINKS - PIPES
 ---------------------------
 """
 
@@ -256,6 +257,40 @@ def test_indexer_links_pipe_confusing():
     }
 
     assert indexer.ids_to_links == expected_links
+
+# We have encountered a very annoying bug when dealing with links that had weird characters after |
+# (special characters, empty spaces...).
+# This test is designed to make sure the program handles these cases correctly, by adding the correct words
+# to the corpus of words and ignoring special characters.
+def test_indexer_links_pipe_weird_characters():
+    indexer = Indexer("wikis/testing/links_handling/LinksWithPipesSpecial.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+
+    expected_links = {
+        1: {2},
+        2: {1},
+        3: {2},
+        4: {3}
+    }
+
+    # These words were ONLY apparent to the right of the pipe.
+    words_in_links = ["Calculus", "Socrates", "CS"]
+    special_characters_in_words = ["$", "/", " ", "", "%"]
+    expected_words = stem_words(remove_stop_words(words_in_links))
+
+    actual_words = {}
+    file_io.read_words_file("words_file.txt", actual_words)
+
+    assert indexer.ids_to_links == expected_links
+    for x in expected_words:
+        assert x in actual_words
+    for y in special_characters_in_words:
+        assert y not in actual_words
+
+"""
+---------------------------
+PARSING LINKS - META LINKS
+---------------------------
+"""
 
 # Tests that the program does consider links to metapages and adds the text related to them correctly.
 def test_indexer_meta_links():
@@ -303,13 +338,13 @@ def test_indexer_meta_links():
 
 
 
-def test_pagerank_weights_metapages():
-    indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-    expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.0375, 0.0375, 0.8875, 0.0375], \
-        [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
-    for i in range(1, 5):
-        for j in range(1, 5):
-            indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
+#def test_pagerank_weights_metapages():
+#    indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+#    expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.0375, 0.0375, 0.8875, 0.0375], \
+#        [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
+#    for i in range(1, 5):
+#        for j in range(1, 5):
+#            indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
 
 
 # def test_indexer_ignore_external_links():
@@ -420,7 +455,14 @@ def test_pagerank_scores_examples():
     assert pagerank_scores[4] == pytest.approx(0.4625, 0.001)
 
 
-
+def test_pagerank_small_wiki_adds_up_to_1():
+    Indexer("wikis/SmallWiki.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    pagerank_scores = {}
+    file_io.read_docs_file("docs_file.txt", pagerank_scores)
+    sum = 0
+    for rank in pagerank_scores.values():
+        sum += rank
+    assert sum == pytest.approx(1) 
     
 
 
