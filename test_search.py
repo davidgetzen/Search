@@ -44,6 +44,7 @@ def test_all_stop_words():
     for word in testing_dict.keys():
         assert testing_dict[word][1] == 0.0
     
+    
 
     
     
@@ -125,9 +126,7 @@ def test_indexer_ignore_external_links():
 
     assert indexer.ids_to_links == expected_links
     for x in expected_words:
-        assert x in actual_words.keys()
-
-
+        assert x in actual_words.keys()       
     
 
 

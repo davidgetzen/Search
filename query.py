@@ -53,7 +53,7 @@ class Querier:
                     if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
-                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar           
+                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar      
 
     def get_final_results(self):
         sorted_docs = sorted(self.ids_to_scores.items(), key=lambda x: x[1], reverse=True)

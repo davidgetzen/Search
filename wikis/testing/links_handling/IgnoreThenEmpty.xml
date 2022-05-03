@@ -7,7 +7,7 @@
       1
     </id>
     <text>
-      CS is all about fast [[Mathematics]]. And [[Logic]]
+      CS is all about fast [[Mathematics]].
     </text>
   </page>
   <page>
@@ -18,7 +18,8 @@
 	  2
 	</id>
 	<text>
-      Mathematics is such an awesome discipline. [[Philosophy]] too!
+      [[Mathematics]] is such an awesome discipline. Some people love [[Mathematics]], while other hate it.
+      [[Physics]] highly depends on Mathematics. 
 	</text>
   </page>
   <page>
@@ -40,8 +41,7 @@
 	  4
 	</id>
 	<text>
-      Remarkable figures include [[Socrates]], or [[Aristotle]].
-      They did some [[Mathematics]]. And [[Philosophy]]
+      Remarkable figures include [[Socrates]], or [[Aristotle]]. They lived in [[Ancient Greece]].
 	</text>
   </page>
 </xml>
