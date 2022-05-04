@@ -48,8 +48,6 @@ class Indexer:
             page_text = page.find("text").text.strip().lower()
             page_words = self.get_page_words(page_text, page_id)
 
-
-
             # Populating ids_to_words_to_counts is done here.
             ids_to_words_to_counts[page_id] = {}
             
@@ -65,16 +63,8 @@ class Indexer:
             ids_to_max_count[page_id] = max_count
 
             # Term Frequencies Computations
-            #all_pairs = [pair for pair in ids_to_words_to_counts[page_id].items()]
-            #if len(all_pairs) == 0:
-            #    a_j = 
-            #a_j = max(
-                #[pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
             for word in ids_to_words_to_counts[page_id].keys():
                 a_j = ids_to_max_count[page_id]
-
-                #if a_j == 0:
-                    #continue
                 
                 tf = (ids_to_words_to_counts[page_id][word])/a_j
 
@@ -103,39 +93,20 @@ class Indexer:
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
         text_tokens = re.findall(n_regex, text)
-        #text_tokens = [token for token in re.findall(n_regex, text) if token not in ["", "\n", " ", "\0"]]
         return text_tokens
 
     def remove_stop_words(self, words):
-        return [word for word in words if word not in STOP_WORDS]
-        #new_list = []
-        #for word in words:
-            #if len(word) == 1:
-                #new_list.append(word)
-            #elif word not in STOP_WORDS:
-                #new_list.append(word)
-        #return new_list                    
+        return [word for word in words if word not in STOP_WORDS]               
 
     def stem_words(self, words):
-        return [the_stemmer.stem(word) for word in words]
-        # new_list = []
-        # for word in words:
-        #     if len(word) == 1:
-        #         new_list.append(word)
-        #     else:
-        #         new_list.append(the_stemmer.stem(word))    
-        # return new_list        
-
+        return [the_stemmer.stem(word) for word in words]       
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
         page_with_links_handled = self.handle_links(page_tokens, page_id)
         page_without_stop_words = self.remove_stop_words(page_with_links_handled)
         page_with_stemmed_words = self.stem_words(page_without_stop_words)
-        #page_with_stemmed_words = [word for word in self.stem_words(page_without_stop_words) if word != ""]
-        #page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
         return page_with_stemmed_words
-        #return [word for word in page_with_links_handled if word != ""]
 
     def handle_links(self, words_list, page_id):
         cleaned_list = []
@@ -175,9 +146,7 @@ class Indexer:
             for link in links:
                 if link in self.ids_to_links[doc_id]:
                     if link in self.titles_to_ids.keys():
-                        ids_to_links_ids[doc_id].add(self.titles_to_ids[link])
-            #if len(ids_to_links_ids[doc_id]):
-                #ids_to_links_ids.add(d)           
+                        ids_to_links_ids[doc_id].add(self.titles_to_ids[link])        
         self.ids_to_links = ids_to_links_ids
 
 
@@ -234,6 +203,4 @@ if __name__ == "__main__":
         try:
             Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
         except FileNotFoundError as e:
-            print("File " + e.filename + " was not found!")    
-
-        
+            print("File " + e.filename + " was not found!")

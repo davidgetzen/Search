@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 import sys
+import re
 
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
@@ -18,25 +19,13 @@ class Querier:
 
     def start_querying(self, query_text):
         self.ids_to_scores = {}
-        words = self.get_query_words(query_text)
+        words = self.clean_words(query_text)
         self.score_docs(words)
 
         if len(self.ids_to_scores) == 0:
             print("Sorry! No search results were found.")
         else:
             self.get_final_results()
-
-    def get_query_words(self, query_text):
-        query_words = query_text.strip().lower().split(" ")
-        stop_removed = self.remove_stop_words(query_words)
-        stemmed = self.stem_words(stop_removed)
-        return stemmed
-
-    def remove_stop_words(self, words):
-        return [word for word in words if word not in STOP_WORDS]
-
-    def stem_words(self, words):
-        return [the_stemmer.stem(word) for word in words]
 
     def score_docs(self, stemmed_words):
         for word in stemmed_words:
@@ -48,7 +37,7 @@ class Querier:
                     if doc not in self.ids_to_scores:
                         self.ids_to_scores[doc] = self.words_dict[word][doc] * scalar
                     else:
-                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar
+                        self.ids_to_scores[doc] += self.words_dict[word][doc] * scalar               
 
     def get_final_results(self):
         sorted_docs = sorted(self.ids_to_scores.items(),
@@ -59,6 +48,23 @@ class Querier:
             print(str(i+1) + " - " + self.titles_dict[doc_title])
             i += 1
 
+    def tokenize_query(self, query_text):
+        n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
+        text_tokens = re.findall(n_regex, query_text)
+        return text_tokens
+
+    def remove_stop_words(self, words):
+        return [word for word in words if word not in STOP_WORDS]
+
+    def stem_words(self, words):
+        return [the_stemmer.stem(word) for word in words]
+
+    def clean_words(self, query_text):
+        tokens = self.tokenize_query(query_text.lower())
+        stop_removed = self.remove_stop_words(tokens)
+        stemmed = self.stem_words(stop_removed)
+        return stemmed
+ 
 
 def read_files(title_path, doc_path, word_path):
 
