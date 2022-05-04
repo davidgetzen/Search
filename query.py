@@ -96,7 +96,7 @@ if __name__ == "__main__":
         print("The format of the titles file is incorrect!")
         exit()
     except ValueError as e:
-        print("The format of the docs file is incorrect!")
+        print("The format of the docs file or the words file is incorrect!")
         exit()
 
     querier = Querier(dicts[0], dicts[1], dicts[2], is_pagerank)
