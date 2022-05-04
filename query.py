@@ -73,6 +73,7 @@ def read_files(title_path, doc_path, word_path):
 
     return [titles_dict, docs_dict, words_dict]
 
+
 if __name__ == "__main__":
 
     is_pagerank = sys.argv[1] == "--pagerank"
