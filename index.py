@@ -1,16 +1,12 @@
 from math import log, sqrt
-import re
 import xml.etree.ElementTree as et
 import sys
 
 import file_io
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+import text_cleaner
 
-STOP_WORDS = stopwords.words('english')
 EPSILON = 0.15
 DELTA = 0.001
-the_stemmer = PorterStemmer()
 
 class Indexer:
 
@@ -89,23 +85,12 @@ class Indexer:
         file_io.write_title_file(self.title_path, self.ids_to_titles)
         file_io.write_words_file(self.words_path, words_to_ids_to_relevance)
         file_io.write_docs_file(self.docs_path, ids_to_pageranks)
-
-    def tokenize_text(self, text):
-        n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
-        text_tokens = re.findall(n_regex, text)
-        return text_tokens
-
-    def remove_stop_words(self, words):
-        return [word for word in words if word not in STOP_WORDS]               
-
-    def stem_and_lower_words(self, words):
-        return [the_stemmer.stem(word.lower()) for word in words]       
-
+    
     def get_page_words(self, page_text, page_id):
-        page_tokens = self.tokenize_text(page_text)
+        page_tokens = text_cleaner.tokenize_text(page_text)
         page_with_links_handled = self.handle_links(page_tokens, page_id)
-        page_without_stop_words = self.remove_stop_words(page_with_links_handled)
-        page_with_stemmed_words = self.stem_and_lower_words(page_without_stop_words)
+        page_without_stop_words = text_cleaner.remove_stop_words(page_with_links_handled)
+        page_with_stemmed_words = text_cleaner.stem_and_lower_words(page_without_stop_words)
         return page_with_stemmed_words
 
     def handle_links(self, words_list, page_id):
@@ -118,15 +103,15 @@ class Indexer:
                 if "|" in word:
                     splitted_word = word.split("|")
                     link_to_add = splitted_word[0]
-                    cleaned_list.extend(self.tokenize_text(splitted_word[1].strip()))
+                    cleaned_list.extend(text_cleaner.tokenize_text(splitted_word[1].strip()))
                 else:
                     link_to_add = word
                     if ":" in word:
                         split_word = word.split(":")
-                        cleaned_list.extend(self.tokenize_text(split_word[0].strip()))
-                        cleaned_list.extend(self.tokenize_text(split_word[1].strip()))
+                        cleaned_list.extend(text_cleaner.tokenize_text(split_word[0].strip()))
+                        cleaned_list.extend(text_cleaner.tokenize_text(split_word[1].strip()))
                     else:
-                        cleaned_list.extend(self.tokenize_text(word.strip()))
+                        cleaned_list.extend(text_cleaner.tokenize_text(word.strip()))
                 self.add_pagerank_link(page_id, link_to_add.strip())
             else:
                 cleaned_list.append(word)

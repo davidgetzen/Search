@@ -1,4 +1,5 @@
 import file_io as io
+import text_cleaner
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
@@ -19,7 +20,7 @@ class Querier:
 
     def start_querying(self, query_text):
         self.ids_to_scores = {}
-        words = self.clean_words(query_text)
+        words = self.get_query_words(query_text)
         self.score_docs(words)
 
         if len(self.ids_to_scores) == 0:
@@ -59,10 +60,10 @@ class Querier:
     def stem_words(self, words):
         return [the_stemmer.stem(word) for word in words]
 
-    def clean_words(self, query_text):
-        tokens = self.tokenize_query(query_text.lower())
-        stop_removed = self.remove_stop_words(tokens)
-        stemmed = self.stem_words(stop_removed)
+    def get_query_words(self, query_text):
+        tokens = text_cleaner.tokenize_text(query_text)
+        stop_removed = text_cleaner.remove_stop_words(tokens)
+        stemmed = text_cleaner.stem_and_lower_words(stop_removed)
         return stemmed
  
 

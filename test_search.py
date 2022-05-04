@@ -2,13 +2,7 @@ import pytest
 from index import Indexer
 from query import Querier
 import file_io
-import repl
-
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
-STOP_WORDS = stopwords.words('english')
-the_stemmer = PorterStemmer()
-
+import text_cleaner
 
 """
 ------- Indexer Text Parsing Tests ----------
@@ -128,7 +122,8 @@ def test_indexer_links_pipe():
 
     # These words were ONLY apparent to the right of the pipe.
     words_in_links = ["Calculus", "Socrates", "CS", "computations"]
-    expected_words = stem_words(remove_stop_words(words_in_links))
+    expected_without_stop_words = text_cleaner.remove_stop_words(words_in_links)
+    expected_words = text_cleaner.stem_and_lower_words(expected_without_stop_words)
 
     actual_words = {}
     file_io.read_words_file("words_file.txt", actual_words)
@@ -168,7 +163,9 @@ def test_indexer_links_pipe_special_characters():
     # These words were ONLY apparent to the right of the pipe.
     words_in_links = ["Calculus", "Socrates", "CS"]
     special_characters_in_words = ["$", "/", " ", "", "%"]
-    expected_words = stem_words(remove_stop_words(words_in_links))
+
+    expected_without_stop_words = text_cleaner.remove_stop_words(words_in_links)
+    expected_words = text_cleaner.stem_and_lower_words(expected_without_stop_words)
 
     actual_words = {}
     file_io.read_words_file("words_file.txt", actual_words)
@@ -195,7 +192,8 @@ def test_indexer_meta_links():
     }
 
     words_in_links = ["Category", "Computer", "Science", "Mathematics"]
-    expected_words = stem_words(remove_stop_words(words_in_links))
+    expected_without_stop_words = text_cleaner.remove_stop_words(words_in_links)
+    expected_words = text_cleaner.stem_and_lower_words(expected_without_stop_words)
 
     actual_words = {}
     file_io.read_words_file("words_file.txt", actual_words)
@@ -216,7 +214,8 @@ def test_indexer_meta_links_spaces():
     }
 
     words_in_links = ["Category", "Computer", "Science", "Mathematics"]
-    expected_words = stem_words(remove_stop_words(words_in_links))
+    expected_without_stop_words = text_cleaner.remove_stop_words(words_in_links)
+    expected_words = text_cleaner.stem_and_lower_words(expected_without_stop_words)
 
     actual_words = {}
     file_io.read_words_file("words_file.txt", actual_words)
@@ -643,10 +642,3 @@ def test_query_score_docs():
     #                            "words_file.txt", "docs_file.txt")
     # test_query.start_querying("computer science")
 
-
-def remove_stop_words(words):
-    return [word for word in words if word not in STOP_WORDS]
-
-
-def stem_words(words):
-    return [the_stemmer.stem(word).lower() for word in words]
