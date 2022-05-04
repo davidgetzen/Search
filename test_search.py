@@ -46,8 +46,9 @@ def test_indexer_lower_upper():
                                 "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
-    print(testing_dict[0])
-    #assert len(list(testing_dict.keys())) == 1
+    # print(testing_dict[0])
+    print(testing_dict)
+    assert len(list(testing_dict.keys())) == 1
 
 
 def test_indexer_lower_upper_multiple_pages():
