@@ -405,23 +405,6 @@ def test_euclidian_distance():
     assert indexer.euclidean_distance(r_i, r_f) == pytest.approx(8.06225)
     assert indexer.euclidean_distance(r_f, r_i) == indexer.euclidean_distance(r_i, r_f)
 
-# """
-# ----------------------------------------------------------
-# PARSING - DOES COUNT WORDS IN LINKS AS OTHER WORDS IN TEXT
-# ----------------------------------------------------------
-# """
-# # Makes sure that one word is counted twice, even if one of the instances is in a link.
-# # To do so, the program compares the relevance scores
-# def test_indexer_multiple_counts_links():
-#     Indexer("wikis/testing/links_handling/MultipleCountsLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
-#     word_relevances = {}
-#     file_io.read_words_file("words_file.txt", word_relevances)
-
-#     stemmed_math = stem_words(["mathematics"])[0]
-#     print(word_relevances[stemmed_math])
-
-#     #assert word_relevances[stemmed_math] > word_relevances[stemmed_math][2]
-
 """
 ---------------------------
 PARSING LINKS - CASE SENSITIVITY

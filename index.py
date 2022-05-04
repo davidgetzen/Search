@@ -144,7 +144,6 @@ class Indexer:
         for doc_id, links in self.ids_to_links.items():
             ids_to_links_ids[doc_id] = set()
             for link in links:
-                print(link)
                 if link in self.ids_to_links[doc_id]:
                     if link in self.titles_to_ids.keys():
                         ids_to_links_ids[doc_id].add(self.titles_to_ids[link])        
