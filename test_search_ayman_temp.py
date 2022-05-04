@@ -422,6 +422,24 @@ def test_euclidian_distance():
 
 #     #assert word_relevances[stemmed_math] > word_relevances[stemmed_math][2]
 
+"""
+---------------------------
+PARSING LINKS - CASE SENSITIVITY
+---------------------------
+"""
+# Tests that the program does consider links to metapages and adds the text related to them correctly.
+def test_indexer_case_sensitive_links():
+    indexer = Indexer("wikis/testing/links_handling/CaseSensitivity.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+
+    expected_links = {
+        1: {2, 3, 4},
+        2: {3},
+        3: {4},
+        4: {3}
+    }
+
+    assert indexer.ids_to_links == expected_links
+
 def test_pagerank_scores_examples():
 
     # PageRankExample1.xml

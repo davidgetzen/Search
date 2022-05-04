@@ -98,14 +98,14 @@ class Indexer:
     def remove_stop_words(self, words):
         return [word for word in words if word not in STOP_WORDS]               
 
-    def stem_words(self, words):
+    def stem_and_lower_words(self, words):
         return [the_stemmer.stem(word.lower()) for word in words]       
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
         page_with_links_handled = self.handle_links(page_tokens, page_id)
         page_without_stop_words = self.remove_stop_words(page_with_links_handled)
-        page_with_stemmed_words = self.stem_words(page_without_stop_words)
+        page_with_stemmed_words = self.stem_and_lower_words(page_without_stop_words)
         return page_with_stemmed_words
 
     def handle_links(self, words_list, page_id):
@@ -169,7 +169,6 @@ class Indexer:
         r_f = {}
 
         n = len(self.titles_to_ids)
-        #n = 2
 
         # Initializing values in r and r'
         for id in self.ids_to_links.keys():
