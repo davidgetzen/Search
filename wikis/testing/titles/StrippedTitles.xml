@@ -1,0 +1,17 @@
+<xml>
+    <page>
+        <title>                                   A Wonderful Page           </title>
+        <id>211</id>
+        <text>[[B]] [[C]]</text>
+    </page>
+    <page>
+        <title>An Amazing Page       </title>
+        <id>52</id>
+        <text> </text>
+    </page>
+    <page>
+        <title>A Mesmerizing Page                                    </title>
+        <id>27</id>
+        <text>[[A|F]]</text>
+    </page>
+</xml>

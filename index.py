@@ -39,16 +39,14 @@ class Indexer:
 
             page_id = int(page.find("id").text)  # int(page.find("id"))
             page_title = page.find("title").text.strip()
-            self.ids_to_titles[page_id] = page_title
-            self.titles_to_ids[page_title.lower()] = page_id
+            self.ids_to_titles[page_id] = page_title.strip()
+            self.titles_to_ids[page_title.strip()] = page_id
 
             # Add page_id to pagerank weights dictionary
             self.ids_to_links[page_id] = []
 
-            page_text = page.find("text").text.strip().lower()
+            page_text = page.find("text").text.strip()
             page_words = self.get_page_words(page_text, page_id)
-
-
 
             # Populating ids_to_words_to_counts is done here.
             ids_to_words_to_counts[page_id] = {}
@@ -65,16 +63,8 @@ class Indexer:
             ids_to_max_count[page_id] = max_count
 
             # Term Frequencies Computations
-            #all_pairs = [pair for pair in ids_to_words_to_counts[page_id].items()]
-            #if len(all_pairs) == 0:
-            #    a_j = 
-            #a_j = max(
-                #[pair for pair in ids_to_words_to_counts[page_id].items()], key=lambda x: x[1])[1]
             for word in ids_to_words_to_counts[page_id].keys():
                 a_j = ids_to_max_count[page_id]
-
-                #if a_j == 0:
-                    #continue
                 
                 tf = (ids_to_words_to_counts[page_id][word])/a_j
 
@@ -103,39 +93,20 @@ class Indexer:
     def tokenize_text(self, text):
         n_regex = '''\[\[[^\[]+?\]\]|[a-zA-Z0-9]+'[a-zA-Z0-9]+|[a-zA-Z0-9]+'''
         text_tokens = re.findall(n_regex, text)
-        #text_tokens = [token for token in re.findall(n_regex, text) if token not in ["", "\n", " ", "\0"]]
         return text_tokens
 
     def remove_stop_words(self, words):
-        return [word for word in words if word not in STOP_WORDS]
-        #new_list = []
-        #for word in words:
-            #if len(word) == 1:
-                #new_list.append(word)
-            #elif word not in STOP_WORDS:
-                #new_list.append(word)
-        #return new_list                    
+        return [word for word in words if word not in STOP_WORDS]               
 
-    def stem_words(self, words):
-        return [the_stemmer.stem(word) for word in words]
-        # new_list = []
-        # for word in words:
-        #     if len(word) == 1:
-        #         new_list.append(word)
-        #     else:
-        #         new_list.append(the_stemmer.stem(word))    
-        # return new_list        
-
+    def stem_and_lower_words(self, words):
+        return [the_stemmer.stem(word.lower()) for word in words]       
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
         page_with_links_handled = self.handle_links(page_tokens, page_id)
         page_without_stop_words = self.remove_stop_words(page_with_links_handled)
-        page_with_stemmed_words = self.stem_words(page_without_stop_words)
-        #page_with_stemmed_words = [word for word in self.stem_words(page_without_stop_words) if word != ""]
-        #page_with_links_handled = self.handle_links(page_with_stemmed_words, page_id)
+        page_with_stemmed_words = self.stem_and_lower_words(page_without_stop_words)
         return page_with_stemmed_words
-        #return [word for word in page_with_links_handled if word != ""]
 
     def handle_links(self, words_list, page_id):
         cleaned_list = []
@@ -165,7 +136,7 @@ class Indexer:
         return input_str[:2] == "[[" and input_str[len(input_str)-2:] == "]]"   
 
     def add_pagerank_link(self, current_id, linked_title):
-        if self.ids_to_titles[current_id].lower() != linked_title.lower():
+        if self.ids_to_titles[current_id] != linked_title:
             self.ids_to_links[current_id].append(linked_title)
 
     def filter_unvalid_links(self):
@@ -175,9 +146,7 @@ class Indexer:
             for link in links:
                 if link in self.ids_to_links[doc_id]:
                     if link in self.titles_to_ids.keys():
-                        ids_to_links_ids[doc_id].add(self.titles_to_ids[link])
-            #if len(ids_to_links_ids[doc_id]):
-                #ids_to_links_ids.add(d)           
+                        ids_to_links_ids[doc_id].add(self.titles_to_ids[link])        
         self.ids_to_links = ids_to_links_ids
 
 
@@ -199,7 +168,6 @@ class Indexer:
         r_f = {}
 
         n = len(self.titles_to_ids)
-        #n = 2
 
         # Initializing values in r and r'
         for id in self.ids_to_links.keys():
@@ -223,8 +191,15 @@ class Indexer:
         return sqrt(total_sum)
 
 if __name__ == "__main__":
-    try:
-        Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
-    except TypeError:
-        print("Too many arguments were given. Please try again with the correct number of arguments.")
-        
+
+    if len(sys.argv) > 5:
+        print("Too many arguments were given!")
+        print("Usage is: index.py <XML filepath> <title file> <docs file> <word file>")
+    elif len(sys.argv) < 5:
+        print("Too few arguments were given!")
+        print("Usage is: index.py <XML filepath> <title file> <docs file> <word file>")
+    else:
+        try:
+            Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        except FileNotFoundError as e:
+            print("File " + e.filename + " was not found!")

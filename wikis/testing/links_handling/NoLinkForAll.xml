@@ -1,0 +1,46 @@
+<xml>
+  <page>
+    <title>
+      Computer Science
+    </title>
+    <id>
+      1
+    </id>
+    <text>
+      CS is all about fast math.
+    </text>
+  </page>
+  <page>
+    <title>
+	  Mathematics
+	</title>
+	<id>
+	  2
+	</id>
+	<text>
+      Mathematics is such an awesome discipline.
+	</text>
+  </page>
+  <page>
+    <title>
+	  Philosophy
+	</title>
+	<id>
+	  3
+	</id>
+	<text>
+      Math and Ancient Greece are highly related.
+	</text>
+  </page>
+  <page>
+    <title>
+	  Ancient Greece
+	</title>
+	<id>
+	  4
+	</id>
+	<text>
+      Remarkable figures include Socrates, or Aristotle.
+	</text>
+  </page>
+</xml>

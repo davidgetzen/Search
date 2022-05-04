@@ -1,0 +1,46 @@
+<xml>
+  <page>
+    <title>
+      Computer Science
+    </title>
+    <id>
+      1
+    </id>
+    <text>
+      CS is all about fast [[Mathematics]]. And [[mathematics]] are awesome. And [[MaThEmAtIcS]] too.
+    </text>
+  </page>
+  <page>
+    <title>
+	  Mathematics
+	</title>
+	<id>
+	  2
+	</id>
+	<text>
+      Mathematics is such an awesome discipline. [[mathematics]] too!
+	</text>
+  </page>
+  <page>
+    <title>
+	  mathematics
+	</title>
+	<id>
+	  3
+	</id>
+	<text>
+      [[MaThEmAtIcS]] and Ancient Greece are highly related.
+	</text>
+  </page>
+  <page>
+    <title>
+	  MaThEmAtIcS
+	</title>
+	<id>
+	  4
+	</id>
+	<text>
+      [[mathematics]] is cool.
+	</text>
+  </page>
+</xml>
