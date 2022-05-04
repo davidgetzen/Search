@@ -108,6 +108,38 @@ def test_pagerank_scores_no_links_for_some_pages():
     assert pagerank_scores[4] == pytest.approx(0.2273, 0.001)
 
 """
+NO LINK FOR ALL PAGES
+"""
+
+def test_indexer_no_link_for_all_pages():
+    indexer = Indexer("wikis/testing/links_handling/NoLinkForAll.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    expected_links = {
+        1: set(),
+        2: set(),
+        3: set(),
+        4: set()
+    }
+    assert indexer.ids_to_links == expected_links
+
+def test_pagerank_weights_no_link_for_all_pages():
+    indexer = Indexer("wikis/testing/links_handling/NoLinkForAll.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.3208, 0.0375, 0.3208, 0.3208], \
+        [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
+    for i in range(1, 5):
+        for j in range(1, 5):
+            assert indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001)
+
+def test_pagerank_scores_no_link_for_all_pages():
+    Indexer("wikis/testing/links_handling/NoLinkForAll.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    pagerank_scores = {}
+    file_io.read_docs_file("docs_file.txt", pagerank_scores)
+
+    assert pagerank_scores[1] == pytest.approx(1/4, 0.001)
+    assert pagerank_scores[2] == pytest.approx(1/4, 0.001)
+    assert pagerank_scores[3] == pytest.approx(1/4, 0.001)
+    assert pagerank_scores[4] == pytest.approx(1/4, 0.001)
+
+"""
 ---------------------------
 IGNORE LINKS TO SELF TESTS
 ---------------------------
@@ -359,6 +391,19 @@ def test_indexer_meta_links_spaces():
     assert indexer.ids_to_links == expected_links
     for x in expected_words:
         assert x in actual_words.keys()   
+
+"""
+EUCLIDIAN DISTANCE TESTS
+"""
+def test_euclidian_distance():
+
+    indexer = Indexer("wikis/testing/pagerank/PageRankExample1.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+
+    r_i = {1: 3.0, 2: 5.0, 3: 7.0}
+    r_f = {1: 9.0, 2: 3.0, 3: 2.0}
+
+    assert indexer.euclidean_distance(r_i, r_f) == pytest.approx(8.06225)
+    assert indexer.euclidean_distance(r_f, r_i) == indexer.euclidean_distance(r_i, r_f)
 
 # """
 # ----------------------------------------------------------
