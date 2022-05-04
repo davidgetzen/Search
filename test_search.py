@@ -52,11 +52,13 @@ def test_indexer_lower_upper():
 
 
 def test_indexer_lower_upper_multiple_pages():
-    index_upper_lower = Indexer("wikis/UpperLowerTest.xml", "title_file.txt",
+    index_upper_lower = Indexer("wikis/UpperLowerTestPlural.xml", "title_file.txt",
                                 "docs_file.txt", "words_file.txt")
     testing_dict = {}
+
     file_io.read_words_file("words_file.txt", testing_dict)
-    assert len(list(testing_dict.keys())) == 1
+    assert len(testing_dict.keys()) == 1
+    assert len(testing_dict["test"].keys()) == 3
 
 # Tests the indexer on the text of a page consisting of all stop words.
 # Asserts that none of the stop words will be included in the

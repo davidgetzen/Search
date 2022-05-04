@@ -10,21 +10,23 @@ A
 Test TEST test tEsT TesT
 </text>
 </page>
+<page>
 <title>
 B
 </title>
 <id>
-0
+1
 </id>
 <text>
 Test TEST test tEsT TesT
 </text>
 </page>
+<page>
 <title>
 C
 </title>
 <id>
-0
+2
 </id>
 <text>
 Test TEST test tEsT TesT
