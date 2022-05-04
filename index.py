@@ -39,13 +39,13 @@ class Indexer:
 
             page_id = int(page.find("id").text)  # int(page.find("id"))
             page_title = page.find("title").text.strip()
-            self.ids_to_titles[page_id] = page_title
-            self.titles_to_ids[page_title.lower()] = page_id
+            self.ids_to_titles[page_id] = page_title.strip()
+            self.titles_to_ids[page_title.strip()] = page_id
 
             # Add page_id to pagerank weights dictionary
             self.ids_to_links[page_id] = []
 
-            page_text = page.find("text").text.strip().lower()
+            page_text = page.find("text").text.strip()
             page_words = self.get_page_words(page_text, page_id)
 
             # Populating ids_to_words_to_counts is done here.
@@ -99,7 +99,7 @@ class Indexer:
         return [word for word in words if word not in STOP_WORDS]               
 
     def stem_words(self, words):
-        return [the_stemmer.stem(word) for word in words]       
+        return [the_stemmer.stem(word.lower()) for word in words]       
 
     def get_page_words(self, page_text, page_id):
         page_tokens = self.tokenize_text(page_text)
@@ -136,7 +136,7 @@ class Indexer:
         return input_str[:2] == "[[" and input_str[len(input_str)-2:] == "]]"   
 
     def add_pagerank_link(self, current_id, linked_title):
-        if self.ids_to_titles[current_id].lower() != linked_title.lower():
+        if self.ids_to_titles[current_id] != linked_title:
             self.ids_to_links[current_id].append(linked_title)
 
     def filter_unvalid_links(self):
@@ -144,6 +144,7 @@ class Indexer:
         for doc_id, links in self.ids_to_links.items():
             ids_to_links_ids[doc_id] = set()
             for link in links:
+                print(link)
                 if link in self.ids_to_links[doc_id]:
                     if link in self.titles_to_ids.keys():
                         ids_to_links_ids[doc_id].add(self.titles_to_ids[link])        
