@@ -226,11 +226,14 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 5:
         print("Too many arguments were given!")
-        print("Usage is: indexer.py <XML filepath> <title file> <docs file> <word file>")
+        print("Usage is: index.py <XML filepath> <title file> <docs file> <word file>")
     elif len(sys.argv) < 5:
         print("Too few arguments were given!")
         print("Usage is: index.py <XML filepath> <title file> <docs file> <word file>")
-    else:   
-        Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    else:
+        try:
+            Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        except FileNotFoundError as e:
+            print("File " + e.filename + " was not found!")    
 
         
