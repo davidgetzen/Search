@@ -1,0 +1,7 @@
+<xml>
+    <page><title>A</title><id>1</id><text>minute minute second </text></page>
+    <page><title>B</title><id>2</id><text>second second hour </text></page>
+    <page><title>C</title><id>3</id><text>second hour year </text></page>
+    <page><title>D</title><id>4</id><text>second second minute </text></page>
+    <page><title>E</title><id>5</id><text>second month hour</text></page>
+</xml>

@@ -9,33 +9,57 @@ from nltk.stem import PorterStemmer
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
 
+# Tests the case where one page has no text.
+# Does so with the assertion that this page, identified by its ID,
+# will not be included in the words_to_ids_to_relevance dict.
+
 
 def test_indexer_page_no_text():
     index_empty_page = Indexer("wikis/EmptyPageTest.xml", "title_file.txt",
                                "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
-    # assert [word for word in testing_dict.keys() == 0]
-    # words_to_ids_to_relevance
-    testing_dict.items()
-    #assert [score for score in testing_dict.items()[2] == 0]
-    # Return later
+    for word in testing_dict:
+        assert 1 not in testing_dict[word].keys()
 
 
-def test_lower_upper():
+# Test on a collection of pages for which none have any text.
+# Makes an assertion that the size of the words_to_ids_to_relevances
+# dict written into words_file.txt will be empty.
+def test_indexer_all_pages_empty():
+    index_empty_page = Indexer("wikis/testing/indexing/AllEmptyPagesTest.xml", "title_file.txt",
+                               "docs_file.txt", "words_file.txt")
+    testing_dict = {}
+    file_io.read_words_file("words_file.txt", testing_dict)
+    assert len(testing_dict) == 0
+
+# Tests whether or not the count is the same for the same word upper-case
+# and lower-case. Tests the values of words_to_ids_to_relevance on an XML
+# with a single page, wherein the only word is written five times with
+# verying arrangements of upper-and-lower-case letters. Makes the
+# assertion that the word will be identified as singular and
+# written into the ids_to_words_to_relevance dict as one key.
+
+
+def test_indexer_lower_upper():
+    index_upper_lower = Indexer("wikis/UpperLowerTest.xml", "title_file.txt",
+                                "docs_file.txt", "words_file.txt")
+    testing_dict = {}
+    file_io.read_words_file("words_file.txt", testing_dict)
+    print(testing_dict[0])
+    # assert len(list(testing_dict[0].keys())) == 1
+
+
+def test_indexer_lower_upper_multiple_pages():
     index_upper_lower = Indexer("wikis/UpperLowerTest.xml", "title_file.txt",
                                 "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     assert len(list(testing_dict.keys())) == 1
-    # Test whether or not the count is the same for the same word upper-case
-    # and lower-case. Tests the values of words_to_ids_to_relevance on an XML
-    # with a single page, wherein the only word is written five times with
-    # verying arrangements of upper-and-lower-case letters.
-# REPL throw exceptions
-# All stop words
-# No stop words
-# Tests whether or not the
+
+# Tests the indexer on the text of a page consisting of all stop words.
+# Asserts that none of the stop words will be included in the
+# words_to_ids_to_relevance dict written into words_file.txt.
 
 
 def test_indexer_all_stop_words():
@@ -136,43 +160,116 @@ def test_indexer_ignore_external_links():
     for x in expected_words:
         assert x in actual_words.keys()
 
-# Case to test later - query with all stop words?
 
-
-def test_query_same_relevance_scores_all_docs():
-    indexer = Indexer("wikis/testing/querying/SameRelevanceTest.xml",
+# A basic test of relevance score functionality.
+# The first assertion block tests to make sure that
+# only the keys of
+# documents containing the word "minute" (tokenized as "minut")
+# are in the returned words_dict_test dict.
+# Additionally asserts that the maximum relevance value for
+# the word "minute" (tokenized as "minut") is identified by the
+# document in which it occurs the most.
+def test_indexer_basic_relevance():
+    indexer = Indexer("wikis/testing/indexing/BasicRelevanceTest.xml",
                       "title_file.txt", "docs_file.txt", "words_file.txt")
-    querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt")
+    words_dict_test = {}
+    file_io.read_words_file("words_file.txt", words_dict_test)
 
-    print(querier.start_querying("single"))
-    for score in querier.ids_to_scores.values():
-        assert score == 0.0
-    theInit = 1
-    for name in querier.ids_to_scores.keys():
-        assert name == theInit
-        theInit += 1
+    assert 2 not in list(words_dict_test['minut'].keys())
+    assert 3 not in list(words_dict_test['minut'].keys())
+    assert 5 not in list(words_dict_test['minut'].keys())
+    assert 1 in list(words_dict_test['minut'].keys())
+    assert 4 in list(words_dict_test['minut'].keys())
+
+    assert words_dict_test["minut"][1] == max(
+        list(words_dict_test['minut'].values()))
+
+# Test where the relevance scores returned for a word, "second", are
+# all the same. As every document contains the word "second", the
+# IDF value later implemented in the relevance calculation will be 0.0,
+# allowing each document a relevance score of 0.0 for the word "second".
 
 
-def test_query_same_pagerank_scores():
-    indexer = Indexer("wikis/testing/querying/SameRelevanceTestSec.xml",
+def test_indexer_relevance_all_same():
+    indexer = Indexer("wikis/testing/indexing/BasicRelevanceTest.xml",
                       "title_file.txt", "docs_file.txt", "words_file.txt")
-    actual_words = {}
-    file_io.read_words_file("words_file.txt", actual_words)
-    print(actual_words)
-    querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt")
-    querier.is_pagerank = True
-    querier.start_querying("second")
+    words_dict_test = {}
+    file_io.read_words_file("words_file.txt", words_dict_test)
 
-    # print(querier.titles_dict)
+    for i in range(1, len(list(words_dict_test['second'].keys()))+1):
+        assert i in list(words_dict_test['second'].keys())
+    for val in list(words_dict_test['second'].values()):
+        assert val == 0.0
 
-    #assert querier.start_querying("second")[0] == 'D'
-    #assert querier.start_querying("second")[1] == 'E'
-    print(querier.ids_to_scores)
-    # assert querier.ids_to_scores[5] == querier.ids_to_scores[6]
-    # assert querier.ids_to_scores[5] == max(
-    #     list(querier.ids_to_scores.values()))
-    # assert querier.ids_to_scores[6] == max(
-    #     list(querier.ids_to_scores.values()))
+
+# def test_query_same_pagerank_scores():
+#     indexer = Indexer("wikis/testing/querying/SameRelevanceTestSec.xml",
+#                       "title_file.txt", "docs_file.txt", "words_file.txt")
+#     words_dict_test = {}
+#     file_io.read_words_file("words_file.txt", words_dict_test)
+#     print(words_dict_test)
+#     titles_dict_test = {}
+#     file_io.read_title_file("title_file.txt", titles_dict_test)
+#     docs_dict_test = {}
+#     file_io.read_docs_file("docs_file.txt", docs_dict_test)
+
+#     querier = Querier(titles_dict_test, docs_dict_test, words_dict_test)
+#     querier.is_pagerank = True
+#     querier.start_querying("second")
+
+#     assert words_dict_test["second"][4] == words_dict_test["second"][5]
+
+#     # print(querier.titles_dict)
+
+#     # assert querier.start_querying("second")[0] == 'D'
+#     # assert querier.start_querying("second")[1] == 'E'
+
+#     assert querier.ids_to_scores[4] == querier.ids_to_scores[5]
+#     assert querier.ids_to_scores[4] == max(
+#         list(querier.ids_to_scores.values()))
+#     assert querier.ids_to_scores[5] == max(
+#         list(querier.ids_to_scores.values()))
+#     # Systems tests in google docs, record results with a screenshot
+
+# Test where the first query is made with the word "single" without
+# the PageRank flag set to "true." This returns an ids_to_scores
+# dict where each id has the same score. A unit-test is made to ensure this.
+# The second instance of Querier, querier_with_pagerank, is such that the
+# PageRank flag is now set to "true". No document in the new ids_to_scores
+# dict has the same value as the one before. Moreover, the document
+# linked-to the most, F (id 6), is now returned as the id with the
+# greatest score. A test is made to ensure that F has a greater score than
+# any other id within the new ids_to_scores dict.
+def test_query_score_docs():
+    indexer = Indexer("wikis/testing/querying/DifferencePageRank.xml",
+                      "title_file.txt", "docs_file.txt", "words_file.txt")
+
+    words_dict_test = {}
+    file_io.read_words_file("words_file.txt", words_dict_test)
+    titles_dict_test = {}
+    file_io.read_title_file("title_file.txt", titles_dict_test)
+    docs_dict_test = {}
+    file_io.read_docs_file("docs_file.txt", docs_dict_test)
+
+    querier = Querier(titles_dict_test, docs_dict_test, words_dict_test)
+    querier.start_querying("single")
+
+    querier_with_pagerank = Querier(
+        titles_dict_test, docs_dict_test, words_dict_test)
+    querier_with_pagerank.is_pagerank = True
+    querier_with_pagerank.start_querying("single")
+
+    for id in querier.ids_to_scores.keys():
+        assert querier.ids_to_scores[id] == pytest.approx(
+            0.22314355131420976, 0.001)
+
+    assert querier_with_pagerank.ids_to_scores[6] == max(
+        querier_with_pagerank.ids_to_scores.values())
+
+    for id in querier_with_pagerank.ids_to_scores.keys():
+        assert querier_with_pagerank.ids_to_scores[id] != querier.ids_to_scores[id]
+        if id != 6:
+            assert querier_with_pagerank.ids_to_scores[id] < querier_with_pagerank.ids_to_scores[6]
 
 
 # Query not in any documents/Empty Query
@@ -190,6 +287,7 @@ def test_query_same_pagerank_scores():
 # A wordlist of no stop words (return identical list)
 # If [[Link | Word]] and Word are in same text, make sure Word is counted twice
 # Removing stop words from the textual representations of links
+# Querying: same relevance two docs, same relevance all docs, same pagerank/relevance two docs,
 
 
 # test_query = query.Querier("title_file.txt",
