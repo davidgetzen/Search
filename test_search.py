@@ -47,7 +47,7 @@ def test_indexer_lower_upper():
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     print(testing_dict[0])
-    # assert len(list(testing_dict[0].keys())) == 1
+    #assert len(list(testing_dict.keys())) == 1
 
 
 def test_indexer_lower_upper_multiple_pages():
@@ -202,33 +202,37 @@ def test_indexer_relevance_all_same():
         assert val == 0.0
 
 
-# def test_query_same_pagerank_scores():
-#     indexer = Indexer("wikis/testing/querying/SameRelevanceTestSec.xml",
-#                       "title_file.txt", "docs_file.txt", "words_file.txt")
-#     words_dict_test = {}
-#     file_io.read_words_file("words_file.txt", words_dict_test)
-#     print(words_dict_test)
-#     titles_dict_test = {}
-#     file_io.read_title_file("title_file.txt", titles_dict_test)
-#     docs_dict_test = {}
-#     file_io.read_docs_file("docs_file.txt", docs_dict_test)
+def test_query_same_pagerank_scores():
+    indexer = Indexer("wikis/testing/querying/SameRelevanceTestSec.xml",
+                      "title_file.txt", "docs_file.txt", "words_file.txt")
+    words_dict_test = {}
+    file_io.read_words_file("words_file.txt", words_dict_test)
+    print(words_dict_test)
+    titles_dict_test = {}
+    file_io.read_title_file("title_file.txt", titles_dict_test)
+    docs_dict_test = {}
+    file_io.read_docs_file("docs_file.txt", docs_dict_test)
 
-#     querier = Querier(titles_dict_test, docs_dict_test, words_dict_test)
-#     querier.is_pagerank = True
-#     querier.start_querying("second")
+    querier = Querier(titles_dict_test, docs_dict_test, words_dict_test)
+    querier.start_querying("second")
 
-#     assert words_dict_test["second"][4] == words_dict_test["second"][5]
+    querier_with_pg = Querier(
+        titles_dict_test, docs_dict_test, words_dict_test)
+    querier_with_pg.is_pagerank = True
+    querier_with_pg.start_querying("second")
 
-#     # print(querier.titles_dict)
+    assert words_dict_test["second"][4] == words_dict_test["second"][5]
 
-#     # assert querier.start_querying("second")[0] == 'D'
-#     # assert querier.start_querying("second")[1] == 'E'
+    # print(querier.titles_dict)
 
-#     assert querier.ids_to_scores[4] == querier.ids_to_scores[5]
-#     assert querier.ids_to_scores[4] == max(
-#         list(querier.ids_to_scores.values()))
-#     assert querier.ids_to_scores[5] == max(
-#         list(querier.ids_to_scores.values()))
+    # assert querier.start_querying("second")[0] == 'D'
+    # assert querier.start_querying("second")[1] == 'E'
+
+    assert querier.ids_to_scores[4] == querier.ids_to_scores[5]
+    assert querier.ids_to_scores[4] == max(
+        list(querier.ids_to_scores.values()))
+    assert querier.ids_to_scores[5] == max(
+        list(querier.ids_to_scores.values()))
 #     # Systems tests in google docs, record results with a screenshot
 
 # Test where the first query is made with the word "single" without
@@ -240,6 +244,8 @@ def test_indexer_relevance_all_same():
 # linked-to the most, F (id 6), is now returned as the id with the
 # greatest score. A test is made to ensure that F has a greater score than
 # any other id within the new ids_to_scores dict.
+
+
 def test_query_score_docs():
     indexer = Indexer("wikis/testing/querying/DifferencePageRank.xml",
                       "title_file.txt", "docs_file.txt", "words_file.txt")
@@ -253,11 +259,13 @@ def test_query_score_docs():
 
     querier = Querier(titles_dict_test, docs_dict_test, words_dict_test)
     querier.start_querying("single")
+    print("Without PageRank:", querier.ids_to_scores, '\n')
 
     querier_with_pagerank = Querier(
         titles_dict_test, docs_dict_test, words_dict_test)
     querier_with_pagerank.is_pagerank = True
     querier_with_pagerank.start_querying("single")
+    print("With PageRank", querier_with_pagerank.ids_to_scores)
 
     for id in querier.ids_to_scores.keys():
         assert querier.ids_to_scores[id] == pytest.approx(
@@ -272,27 +280,31 @@ def test_query_score_docs():
             assert querier_with_pagerank.ids_to_scores[id] < querier_with_pagerank.ids_to_scores[6]
 
 
-# Query not in any documents/Empty Query
-# Same relevance scores
-# Same pagerank&relevance scores
-# Page linking to itself -> nothing -> all other pages
-# Link with pipe
-# Meta-Link recognition
-# Page with two pages linking it vs. page with one page linking it -
-# influence on rank of linked doc
-# All pages link to themselves/nothing
-# Page with no text
-# Two pages with the same title?
-# A wordlist of only stop words (return an empty list)
-# A wordlist of no stop words (return identical list)
-# If [[Link | Word]] and Word are in same text, make sure Word is counted twice
-# Removing stop words from the textual representations of links
-# Querying: same relevance two docs, same relevance all docs, same pagerank/relevance two docs,
+# def test_difference_page_rank_unit_test():
 
+# def test_upper_lower_multiple_pages():
 
-# test_query = query.Querier("title_file.txt",
-#                            "words_file.txt", "docs_file.txt")
-# test_query.start_querying("computer science")
+    # Query not in any documents/Empty Query
+    # Same relevance scores
+    # Same pagerank&relevance scores
+    # Page linking to itself -> nothing -> all other pages
+    # Link with pipe
+    # Meta-Link recognition
+    # Page with two pages linking it vs. page with one page linking it -
+    # influence on rank of linked doc
+    # All pages link to themselves/nothing
+    # Page with no text
+    # Two pages with the same title?
+    # A wordlist of only stop words (return an empty list)
+    # A wordlist of no stop words (return identical list)
+    # If [[Link | Word]] and Word are in same text, make sure Word is counted twice
+    # Removing stop words from the textual representations of links
+    # Querying: same relevance two docs, same relevance all docs, same pagerank/relevance two docs,
+
+    # test_query = query.Querier("title_file.txt",
+    #                            "words_file.txt", "docs_file.txt")
+    # test_query.start_querying("computer science")
+
 
 def remove_stop_words(words):
     return [word for word in words if word not in STOP_WORDS]
