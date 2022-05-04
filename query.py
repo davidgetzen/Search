@@ -15,7 +15,6 @@ class Querier:
         self.docs_dict = docs_dict
         self.words_dict = words_dict
         self.ids_to_scores = {}
-        self.figure_out = []
 
     def start_querying(self, query_text):
         self.ids_to_scores = {}
