@@ -1,13 +1,41 @@
 import pytest
 from index import Indexer
-import query
 import file_io
-import repl
 
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 STOP_WORDS = stopwords.words('english')
 the_stemmer = PorterStemmer()
+
+def test_basic_titles_parsing():
+    Indexer("wikis/testing/titles/BasicTitles.xml", "title_file.txt",
+                         "docs_file.txt", "words_file.txt")
+    titles_dict = {}
+    file_io.read_title_file("title_file.txt", titles_dict)
+
+    assert titles_dict[211] == "A Wonderful Page"
+    assert titles_dict[52] == "An Amazing Page"
+    assert titles_dict[27] == "A Mesmerizing Page"
+
+def test_stripped_titles():
+    Indexer("wikis/testing/titles/StrippedTitles.xml", "title_file.txt",
+                         "docs_file.txt", "words_file.txt")
+    titles_dict = {}
+    file_io.read_title_file("title_file.txt", titles_dict)
+
+    assert titles_dict[211] == "A Wonderful Page"
+    assert titles_dict[52] == "An Amazing Page"
+    assert titles_dict[27] == "A Mesmerizing Page"
+
+def test_titles_no_cleaning():
+    Indexer("wikis/testing/titles/SpecialTitles.xml", "title_file.txt",
+                         "docs_file.txt", "words_file.txt")
+    titles_dict = {}
+    file_io.read_title_file("title_file.txt", titles_dict)
+
+    assert titles_dict[211] == '''$%%-2222(  ) [[['''
+    assert titles_dict[52] == '''%""'ldkççé__***$$$%%$'''
+    assert titles_dict[27] == ''';;;;;23048(()["à"])'''
 
 
 def test_indexer_page_no_text(): 
@@ -412,5 +440,4 @@ def test_hammad_weights():
         [0.9, 0.05, 0.05]]
     for i in range(1, 4):
         for j in range(1, 4):
-            #print(str(i) + " " + str(j) + " " + str(indexer.get_pagerank_weight(i, j)))
             assert indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001)
