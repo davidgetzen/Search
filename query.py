@@ -57,7 +57,7 @@ class Querier:
         i = 0
         while i < 10 and i < len(sorted_docs):
             doc_title = sorted_docs[i][0]
-            print(self.titles_dict[doc_title])
+            print(str(i+1) + " - " + self.titles_dict[doc_title])
             i += 1
 
 
@@ -77,6 +77,14 @@ if __name__ == "__main__":
 
     is_pagerank = sys.argv[1] == "--pagerank"
 
+    if len(sys.argv) < 4 or (len(sys.argv) < 5 and is_pagerank):
+        print("Too few arguments were given!")
+        print("Usage is: query.py [--pagerank] <XML filepath> <title file> <docs file> <words file>")
+        exit()
+    elif not is_pagerank and "--" in sys.argv[1]:
+        print(sys.argv[1] + " is not a valid flag!")
+        exit()
+    
     try:
         if is_pagerank:
             dicts = read_files(sys.argv[2], sys.argv[3], sys.argv[4])
@@ -84,6 +92,12 @@ if __name__ == "__main__":
             dicts = read_files(sys.argv[1], sys.argv[2], sys.argv[3])
     except FileNotFoundError as e:
         print("File " + e.filename + " was not found.")
+        exit()
+    except IndexError as e:
+        print("The format of the titles file is incorrect!")
+        exit()
+    except ValueError as e:
+        print("The format of the docs file is incorrect!")
         exit()
 
     querier = Querier(dicts[0], dicts[1], dicts[2], is_pagerank)
