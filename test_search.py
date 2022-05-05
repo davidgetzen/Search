@@ -59,15 +59,41 @@ def test_indexer_lower_upper_multiple_pages():
 # Asserts that none of the stop words will be included in the
 # words_to_ids_to_relevance dict written into words_file.txt.
 
-
 def test_indexer_all_stop_words():
     index_all_stops = Indexer("wikis/AllStopWords.xml", "title_file.txt",
                               "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
-    stop_words = ["the", "a", "an", "in"]
+    stop_words = text_cleaner.stem_and_lower_words(["the", "a", "an", "in"])
     for word in stop_words:
         assert word not in list(testing_dict.keys())
+
+def test_indexer_words_stemmed():
+    Indexer("wikis/AreWordsStemmed.xml", "title_file.txt",
+                              "docs_file.txt", "words_file.txt")        
+    testing_dict = {}
+    file_io.read_words_file("words_file.txt", testing_dict)
+    original_words = ["Computer", "Science", "Cheese", "Charger",
+    "Stupid", "Hello", "Awesome"]
+    stemmed = text_cleaner.stem_and_lower_words(original_words)
+    for word in stemmed:
+        assert word in list(testing_dict.keys())
+    for word in original_words:
+        assert word not in list(testing_dict.keys())
+
+def test_indexer_special_characters():
+    Indexer("wikis/AreWordsStemmed.xml", "title_file.txt",
+                              "docs_file.txt", "words_file.txt")        
+    testing_dict = {}
+    file_io.read_words_file("words_file.txt", testing_dict)
+    original_words = ["Computer", "Science", "Cheese", "Charger",
+    "Stupid", "Hello", "Awesome"]
+    special_chars = ["$", "%", ";", ",", "#", "@"]
+    special = text_cleaner.stem_and_lower_words(original_words)
+    for word in special:
+        assert word in list(testing_dict.keys())
+    for chara in special_chars:
+        assert chara not in list(testing_dict.keys())
 
 """
 ------- Indexer Title Parsing Tests ----------

@@ -1,0 +1,35 @@
+<xml>
+  <page>
+    <title>
+      Page 1
+    </title>
+    <id>
+      1
+    </id>
+    <text>
+      Cheese Computer Science Charger
+    </text>
+  </page>
+  <page>
+    <title>
+	  Page 2
+	</title>
+	<id>
+	  2
+	</id>
+	<text>
+      Hello Stupid Text
+	</text>
+  </page>
+  <page>
+    <title>
+	  Page 3
+	</title>
+	<id>
+	  3
+	</id>
+	<text>
+      Cheese Awesome
+	</text>
+  </page>
+</xml>

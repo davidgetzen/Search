@@ -4,7 +4,7 @@ from query import Querier
 if __name__ == "__main__":
     indexer = Indexer("wikis/testing/links_handling/MultipleCountsLinks.xml", "title_file.txt",
                     "docs_file.txt", "words_file.txt", 49849874)
-    indexer.parse_xml()
+    indexer.start_indexing()
     # querier = Querier("title_file.txt", "docs_file.txt", "words_file.txt", True)
     # querier.start_querying("lycée lyautey")
 
