@@ -13,8 +13,8 @@ import text_cleaner
 # will not be included in the words_to_ids_to_relevance dict.
 
 def test_indexer_page_no_text():
-    index_empty_page = Indexer("wikis/testing/text_parsing/EmptyPageTest.xml", "title_file.txt",
-                               "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/EmptyPageTest.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     for word in testing_dict:
@@ -25,8 +25,8 @@ def test_indexer_page_no_text():
 # Makes an assertion that the size of the words_to_ids_to_relevances
 # dict written into words_file.txt will be empty.
 def test_indexer_all_pages_empty():
-    index_empty_page = Indexer("wikis/testing/text_parsing/AllEmptyPagesTest.xml", "title_file.txt",
-                               "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/AllEmptyPagesTest.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     assert len(testing_dict) == 0
@@ -39,16 +39,16 @@ def test_indexer_all_pages_empty():
 # written into the ids_to_words_to_relevance dict as one key.
 
 def test_indexer_lower_upper():
-    index_upper_lower = Indexer("wikis/testing/text_parsing/UpperLowerTest.xml", "title_file.txt",
-                                "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/UpperLowerTest.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     print(testing_dict)
     assert len(list(testing_dict.keys())) == 1
 
 def test_indexer_lower_upper_multiple_pages():
-    index_upper_lower = Indexer("wikis/testing/text_parsing/UpperLowerTestPlural.xml", "title_file.txt",
-                                "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/UpperLowerTestPlural.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
 
     file_io.read_words_file("words_file.txt", testing_dict)
@@ -60,8 +60,8 @@ def test_indexer_lower_upper_multiple_pages():
 # words_to_ids_to_relevance dict written into words_file.txt.
 
 def test_indexer_all_stop_words():
-    index_all_stops = Indexer("wikis/testing/text_parsing/AllStopWords.xml", "title_file.txt",
-                              "docs_file.txt", "words_file.txt")
+    index_all_stops = Indexer("wikis/testing/text_parsing/AllStopWords.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     stop_words = text_cleaner.stem_and_lower_words(["the", "a", "an", "in"])
@@ -146,7 +146,8 @@ def test_titles_no_cleaning():
 
 # Tests whether the program takes the right element for words vs. links when splitting on pipes.    
 def test_indexer_links_pipe():
-    indexer = Indexer("wikis/testing/links_handling/LinksWithPipes.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinksWithPipes.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
 
     expected_links = {
         1: {2},
@@ -170,7 +171,8 @@ def test_indexer_links_pipe():
 # Makes sure that the program establishes links between pages correctly even if some pages
 # show up as the text of different pages (for example, a link would lead to Mathematics but mention CS)
 def test_indexer_links_pipe_confusing():
-    indexer = Indexer("wikis/testing/links_handling/LinksWithPipesConfusing.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinksWithPipesConfusing.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
 
     expected_links = {
         1: {2},
@@ -186,7 +188,8 @@ def test_indexer_links_pipe_confusing():
 # This test is designed to make sure the program handles these cases correctly, by adding the correct words
 # to the corpus of words and ignoring special characters.
 def test_indexer_links_pipe_special_characters():
-    indexer = Indexer("wikis/testing/links_handling/LinksWithPipesSpecial.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinksWithPipesSpecial.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
 
     expected_links = {
         1: {2},
@@ -217,7 +220,8 @@ def test_indexer_links_pipe_special_characters():
 
 # Tests that the program does consider links to metapages and adds the text related to them correctly.
 def test_indexer_meta_links():
-    indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/MetaPagesTest.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
 
     expected_links = {
         1: {2, 4},
@@ -239,7 +243,8 @@ def test_indexer_meta_links():
 
 # Makes sure that references to links are stripped and words are correctly added to the corpus.
 def test_indexer_meta_links_spaces():
-    indexer = Indexer("wikis/testing/links_handling/MetaPagesSpace.xml", "title_file.txt", "docs_file.txt", "words_file.txt") 
+    indexer = Indexer("wikis/testing/links_handling/MetaPagesSpace.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt") 
 
     expected_links = {
         1: {2, 4},
@@ -264,7 +269,8 @@ def test_indexer_meta_links_spaces():
 #########################################
 # Tests that the program does consider links to metapages and adds the text related to them correctly.
 def test_indexer_case_sensitive_links():
-    indexer = Indexer("wikis/testing/links_handling/CaseSensitivity.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/CaseSensitivity.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
 
     expected_links = {
         1: {2, 3, 4},
@@ -329,7 +335,8 @@ def test_indexer_relevance_all_same():
 def test_pagerank_scores_examples():
 
     # PageRankExample1.xml
-    Indexer("wikis/testing/pagerank/PageRankExample1.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/pagerank/PageRankExample1.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -338,7 +345,8 @@ def test_pagerank_scores_examples():
     assert pagerank_scores[3] == pytest.approx(0.3333, 0.001)
 
     # PageRankExample2.xml
-    Indexer("wikis/testing/pagerank/PageRankExample2.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/pagerank/PageRankExample2.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -348,7 +356,8 @@ def test_pagerank_scores_examples():
     assert pagerank_scores[4] == pytest.approx(0.3867, 0.001)
 
     # PageRankExample3.xml
-    Indexer("wikis/testing/pagerank/PageRankExample3.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/pagerank/PageRankExample3.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -358,7 +367,8 @@ def test_pagerank_scores_examples():
     assert pagerank_scores[4] == pytest.approx(0.4476, 0.001)
 
     # PageRankExample4.xml
-    Indexer("wikis/testing/pagerank/PageRankExample4.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/pagerank/PageRankExample4.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -369,7 +379,8 @@ def test_pagerank_scores_examples():
 
 # Makes sure that the sum of all PageRank scores is one, for SmallWiki.
 def test_pagerank_small_wiki_adds_up_to_1():
-    Indexer("wikis/SmallWiki.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/SmallWiki.xml", "title_file.txt", "docs_file.txt", \
+         "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
     sum = 0
@@ -383,7 +394,8 @@ def test_pagerank_small_wiki_adds_up_to_1():
     
 # Makes sure that the links between pages are established correctly when some pages do not link to anything.
 def test_indexer_no_links_for_some_pages():
-    indexer = Indexer("wikis/testing/links_handling/SomeLinksEmpty.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/SomeLinksEmpty.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_links = {
         1: {2},
         2: set(),
@@ -395,16 +407,19 @@ def test_indexer_no_links_for_some_pages():
 # Makes sure that PageRank handles the case where pages that link to nothing are considered to link to every page, except
 # themselves.
 def test_pagerank_weights_no_links_for_some_pages():
-    indexer = Indexer("wikis/testing/links_handling/SomeLinksEmpty.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/SomeLinksEmpty.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_weights = [[0.0375, 0.8875, 0.0375, 0.0375], [0.3208, 0.0375, 0.3208, 0.3208], \
         [0.0375, 0.4625, 0.0375, 0.4625], [0.3208, 0.3208, 0.3208, 0.0375]]
     for i in range(1, 5):
         for j in range(1, 5):
-            assert indexer.get_pagerank_weight(i, j) == pytest.approx(expected_weights[i-1][j-1], 0.001) 
+            assert indexer.get_pagerank_weight(i, j) == \
+                pytest.approx(expected_weights[i-1][j-1], 0.001) 
 
 # Makes sure that computed scores are accurate when some pages link to nothing.
 def test_pagerank_scores_no_links_for_some_pages():
-    Indexer("wikis/testing/links_handling/SomeLinksEmpty.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/links_handling/SomeLinksEmpty.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -419,7 +434,8 @@ def test_pagerank_scores_no_links_for_some_pages():
 
 # Tests that an empty set is given when none of the pages have links.
 def test_indexer_no_link_for_all_pages():
-    indexer = Indexer("wikis/testing/links_handling/NoLinkForAll.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/NoLinkForAll.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_links = {
         1: set(),
         2: set(),
@@ -432,7 +448,8 @@ def test_indexer_no_link_for_all_pages():
 # (i.e., that the special case where a page with no links has to link to everything 
 # except itself is handled.)
 def test_pagerank_weights_no_link_for_all_pages():
-    indexer = Indexer("wikis/testing/links_handling/NoLinkForAll.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/NoLinkForAll.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_weights = [[0.0375, 0.3208, 0.3208, 0.3208], [0.3208, 0.0375, 0.3208, 0.3208], \
         [0.3208, 0.3208, 0.0375, 0.3208], [0.3208, 0.3208, 0.3208, 0.0375]]
     for i in range(1, 5):
@@ -442,7 +459,8 @@ def test_pagerank_weights_no_link_for_all_pages():
 # Tests that the final PageRank scores in this special case of none of the pages having
 # links are accurate.
 def test_pagerank_scores_no_link_for_all_pages():
-    Indexer("wikis/testing/links_handling/NoLinkForAll.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/links_handling/NoLinkForAll.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -457,7 +475,8 @@ def test_pagerank_scores_no_link_for_all_pages():
 
 # Makes sure that the program does not consider links in cases where a page links to itself./
 def test_indexer_ignore_links_self():
-    indexer = Indexer("wikis/testing/links_handling/LinksToSelf.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinksToSelf.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_links = {
         1: {2},
         2: {3},
@@ -469,7 +488,8 @@ def test_indexer_ignore_links_self():
 # Tests that the weights are computed correctly - i.e., that links to themselves are indeed ignored in the
 # computation.
 def test_pagerank_weights_ignore_links_self():
-    indexer = Indexer("wikis/testing/links_handling/LinksToSelf.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinksToSelf.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_weights = [[0.0375, 0.8875, 0.0375, 0.0375], [0.0375, 0.0375, 0.8875, 0.0375], \
         [0.0375, 0.4625, 0.0375, 0.4625], [0.0375, 0.4625, 0.4625, 0.0375]]
     for i in range(1, 5):
@@ -478,7 +498,8 @@ def test_pagerank_weights_ignore_links_self():
 
 # Tests that the final PageRank scores are accurate, when some pages link to themselves.
 def test_pagerank_scores_ignore_links_self():
-    Indexer("wikis/testing/links_handling/LinksToSelf.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/links_handling/LinksToSelf.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -494,7 +515,8 @@ def test_pagerank_scores_ignore_links_self():
 # Makes sure that the program ignores duplicates, i.e., does not add a page twice
 # when it is already in the set of links.
 def test_indexer_ignore_links_duplicates():
-    indexer = Indexer("wikis/testing/links_handling/LinkDuplicates.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinkDuplicates.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_links = {
         1: {2},
         2: {3},
@@ -505,7 +527,8 @@ def test_indexer_ignore_links_duplicates():
 
 # Ensures that duplicates are ignored when computing PageRank weights.
 def test_pagerank_weights_ignore_duplicates():
-    indexer = Indexer("wikis/testing/links_handling/LinkDuplicates.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/LinkDuplicates.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_weights = [[0.0375, 0.8875, 0.0375, 0.0375], [0.0375, 0.0375, 0.8875, 0.0375], \
         [0.0375, 0.4625, 0.0375, 0.4625], [0.0375, 0.4625, 0.4625, 0.0375]]
     for i in range(1, 5):
@@ -514,7 +537,8 @@ def test_pagerank_weights_ignore_duplicates():
 
 # Ensures that duplicates are ignored for the final computation of PageRank scores.
 def test_pagerank_scores_ignore_duplicates():
-    Indexer("wikis/testing/links_handling/LinkDuplicates.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/links_handling/LinkDuplicates.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -529,7 +553,8 @@ def test_pagerank_scores_ignore_duplicates():
 
 # Ensures that the program does ignore external links (i.e., links outside the wiki).
 def test_indexer_ignore_external_links():
-    indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_links = {
         1: {2},
         2: {3},
@@ -540,7 +565,8 @@ def test_indexer_ignore_external_links():
 
 # Ensures that the program does ignore external links when computing PageRank weights.
 def test_pagerank_weights_ignore_external_links():
-    indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/ExternalLinks.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_weights = [[0.0375, 0.8875, 0.0375, 0.0375], [0.0375, 0.0375, 0.8875, 0.0375], \
         [0.0375, 0.4625, 0.0375, 0.4625], [0.0375, 0.4625, 0.4625, 0.0375]]
     for i in range(1, 5):
@@ -549,7 +575,8 @@ def test_pagerank_weights_ignore_external_links():
 
 # Ensures that the program does ignore external links when giving final PageRank scores.
 def test_pagerank_scores_ignore_external_links():
-    Indexer("wikis/testing/links_handling/ExternalLinks.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/links_handling/ExternalLinks.xml", \
+        "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -565,7 +592,8 @@ def test_pagerank_scores_ignore_external_links():
 # Makes sure that the case where ignoring pages leads to some pages not linking to anything
 # is handled correctly.
 def test_indexer_ignore_then_empty():
-    indexer = Indexer("wikis/testing/links_handling/IgnoreThenEmpty.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/IgnoreThenEmpty.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_links = {
         1: {2},
         2: set(),
@@ -577,7 +605,8 @@ def test_indexer_ignore_then_empty():
 # Makes sure that weights are computed correctly in the case where ignoring pages 
 # leads to some pages not linking to anything.
 def test_pagerank_weights_ignore_then_empty():
-    indexer = Indexer("wikis/testing/links_handling/IgnoreThenEmpty.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    indexer = Indexer("wikis/testing/links_handling/IgnoreThenEmpty.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     expected_weights = [[0.0375, 0.8875, 0.0375, 0.0375], [0.3208, 0.0375, 0.3208, 0.3208], \
         [0.0375, 0.4625, 0.0375, 0.4625], [0.3208, 0.3208, 0.3208, 0.0375]]
     for i in range(1, 5):
@@ -587,7 +616,8 @@ def test_pagerank_weights_ignore_then_empty():
 # Makes sure that PageRank scores are computed correctly in the case where ignoring pages 
 # leads to some pages not linking to anything.
 def test_pagerank_scores_ignore_then_empty():
-    Indexer("wikis/testing/links_handling/IgnoreThenEmpty.xml", "title_file.txt", "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/links_handling/IgnoreThenEmpty.xml", \
+         "title_file.txt", "docs_file.txt", "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
 
@@ -673,9 +703,11 @@ def test_query_score_docs():
         querier_with_pagerank.ids_to_scores.values())
 
     for id in querier_with_pagerank.ids_to_scores.keys():
-        assert querier_with_pagerank.ids_to_scores[id] != querier.ids_to_scores[id]
+        assert querier_with_pagerank.ids_to_scores[id] != \
+            querier.ids_to_scores[id]
         if id != 6:
-            assert querier_with_pagerank.ids_to_scores[id] < querier_with_pagerank.ids_to_scores[6]
+            assert querier_with_pagerank.ids_to_scores[id] < \
+                querier_with_pagerank.ids_to_scores[6]
 
 
 # def test_difference_page_rank_unit_test():
@@ -702,4 +734,3 @@ def test_query_score_docs():
     # test_query = query.Querier("title_file.txt",
     #                            "words_file.txt", "docs_file.txt")
     # test_query.start_querying("computer science")
-
