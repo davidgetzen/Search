@@ -40,9 +40,6 @@ class Indexer:
         self.ids_to_links = {}
         self.ids_to_titles = {}
 
-        self.start_time = time.time()
-
-        print("Indexing... Please wait.")
         self.start_indexing()
 
     """
@@ -66,6 +63,10 @@ class Indexer:
         # Parses the XML file given by the user.
         root = et.parse(self.file_path).getroot()
         all_pages = root.findall("page")
+
+        # Takes the start time, to later compute the duratrion for indexing.
+        self.start_time = time.time()
+        print("Indexing... Please wait.")
 
         # Sets up necessary local data structures to store results of various computations
         # on the dataset.
@@ -403,3 +404,6 @@ if __name__ == "__main__":
             Indexer(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
         except FileNotFoundError as e: # Case where the XML file given is not found.
             print("File " + e.filename + " was not found!")
+        except et.ParseError as e: # Case where XML file is in wrong format.
+            print("The format of the XML file given is not valid.")
+                
