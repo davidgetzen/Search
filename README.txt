@@ -94,6 +94,13 @@ As far as we know, we should’ve implemented all of the features required for f
 As for extra features, we simply added a stopwatch for the indexing process: when Indexing is done,
 the program informs the user of how long it took to complete the Indexing process.
 
+*** Testing Plan ***
+We have tested our program with both unit and system tests.
+The unit tests are in test_search.py and test text, title, link parsing,
+relevance scores, PageRank scores, as well as some helper methods in our program.
+
+As for the system tests, they are outlined below.
+
 ##############################################################
                         SYSTEM TESTS
 ##############################################################
