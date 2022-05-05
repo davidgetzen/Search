@@ -192,14 +192,22 @@ if __name__ == "__main__":
     if len(sys.argv) < 4 or (len(sys.argv) < 5 and is_pagerank):
         # Case where too few arguments are provided in the command line.
         print("Too few arguments were given!")
+<<<<<<< HEAD
         print(
             "Usage is: query.py [--pagerank] <XML filepath> <title file> <docs file> <words file>")
+=======
+        print("Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
+>>>>>>> 07de3b3173bc2e78f77b14bd1aa48cfbdbb2ad76
         exit()
     elif (len(sys.argv) > 4 and not is_pagerank) or len(sys.argv) > 5:
         # Case where too many arguments are provided in the command line.
         print("Too many arguments were given!")
+<<<<<<< HEAD
         print(
             "Usage is: query.py [--pagerank] <XML filepath> <title file> <docs file> <words file>")
+=======
+        print("Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
+>>>>>>> 07de3b3173bc2e78f77b14bd1aa48cfbdbb2ad76
         exit()
     elif not is_pagerank and "--" in sys.argv[1]:
         # Case where a value other than '--pagerank' is given as the
