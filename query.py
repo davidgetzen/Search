@@ -27,7 +27,7 @@ class Querier:
     - words_dict: the words_to_ids_to_relevance dictionary read in from words_path in the read_files function.
     - is_pagerank: determines whether or not pagerank scores will be used in returning documents for a given query.
 
-    Returns:
+    Returns: 
     Nothing -- It starts the Querying process.
     """
 
@@ -192,12 +192,14 @@ if __name__ == "__main__":
     if len(sys.argv) < 4 or (len(sys.argv) < 5 and is_pagerank):
         # Case where too few arguments are provided in the command line.
         print("Too few arguments were given!")
-        print("Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
+        print(
+            "Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
         exit()
     elif (len(sys.argv) > 4 and not is_pagerank) or len(sys.argv) > 5:
         # Case where too many arguments are provided in the command line.
         print("Too many arguments were given!")
-        print("Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
+        print(
+            "Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
         exit()
     elif not is_pagerank and "--" in sys.argv[1]:
         # Case where a value other than '--pagerank' is given as the

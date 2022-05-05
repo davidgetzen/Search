@@ -182,6 +182,254 @@ Please enter your query (or type :quit to leave the program): "
 ***********************************
   QUERY RESULTS FOR SPECIAL CASES
 ***********************************
+TEST ONE: Comparing the returned documents for the query "computer science"
+and "computer science" with many spaces between "computer" and "science".
+Expected output: query will print the same documents for "computer science" 
+and "computer                science"
+
+Input 1: “computer science”
+Input 2:  “computer                                          science” 
+Output: 
+LEO (computer)
+PCP
+Junk science
+Hacker (term)
+Malware
+Gary Kildall
+Motherboard
+Foonly
+PVC (disambiguation)
+Graphical user interface
+
+TEST TWO: Query given where the first word is recognized within the 
+XML, and the second is not recognized within the XML. 
+Expected Output: The same documents will be printed for the valid term
+in both cases. The term not found within the XML will be ignored. 
+
+Input 1: "Jonathan Swift"
+Output:
+1 - Jonathan Swift
+2 - Harappa
+3 - Nigeria
+4 - Ontology
+5 - Kuomintang
+6 - Netherlands
+7 - Portugal
+8 - Nazi Germany
+9 - Joseph Stalin
+10 - Pope Clement III
+
+Input 2: "Kumon"
+Output 2:
+“Sorry! No search results were found.”
+
+Input 3: “Jonathan Swift Kumon”
+Output 3:
+1 - Jonathan Swift
+2 - Harappa
+3 - Nigeria
+4 - Ontology
+5 - Kuomintang
+6 - Netherlands
+7 - Portugal
+8 - Nazi Germany
+9 - Joseph Stalin
+10 - Pope Clement III
+
+TEST THREE: Query given where the first word is recognized within the 
+XML, and the second is not recognized within the XML. For clairty's sake
+this is the same test as TEST TWO, with the exception that PageRank is now 
+taken into account. 
+Expected Output: The same documents will be printed for the valid term
+in both cases. The term not found within the XML will be ignored. 
+
+Input 1: "Jonathan Swift"
+Output:
+1 - Jonathan Swift
+2 - Harappa
+3 - Nigeria
+4 - Netherlands
+5 - Kuomintang
+6 - Nazi Germany
+7 - Portugal
+8 - Montoneros
+9 - Joseph Stalin
+10 - Four Freedoms
+
+Input 2: "Kumon"
+Output 2:
+“Sorry! No search results were found.”
+
+Input 3: “Jonathan Swift Kumon”
+Output 3:
+1 - Jonathan Swift
+2 - Harappa       
+3 - Nigeria       
+4 - Netherlands   
+5 - Kuomintang    
+6 - Nazi Germany  
+7 - Portugal      
+8 - Montoneros    
+9 - Joseph Stalin 
+10 - Four Freedoms
+
+TEST FOUR: Results for queries “Computer”, “Computer Science”, and 
+“Science” will be observed to ensure that the PageRank and relevance scores 
+combined for the results of the query “Computer Science” are different from 
+those corresponding to just “Computer” or “Science”. 
+Expected Outcome: None of the document-lists returned will be identical to
+the other. 
+
+Input 1: "Computer"
+Output 1: 
+1 - Graphical user interface
+2 - John von Neumann
+3 - Motherboard
+4 - MD5
+5 - LEO (computer)
+6 - Malware
+7 - O
+8 - Hacker (term)
+9 - Gary Kildall
+10 - Password
+
+Input 2: “Science”
+Output 2:
+1 - Ontology
+2 - Portugal
+3 - Magnetosphere
+4 - J?rgen Habermas
+5 - Junk science
+6 - Mercury (planet)
+7 - Planet
+8 - Immunology
+9 - Galilean moons
+10 - Islamabad Capital Territory
+
+
+Input 3: “Computer Science”
+Output 3:
+1 - Graphical user interface
+2 - Portugal
+3 - Ontology
+4 - Magnetosphere
+5 - J?rgen Habermas
+6 - Planet
+7 - Junk science
+8 - Mercury (planet)
+9 - John von Neumann
+10 - Immunology
+
+TEST FIVE: Results for queries “Computer”, “Computer Science”, and 
+“Science” will be observed to ensure that the relevance scores 
+for the results of the query “Computer Science” are different from 
+those corresponding to just “Computer” or “Science”. For clarity's sake, this
+is the same test as TEST FOUR, with the expection that PageRank calculations
+are not utilized in returning documents. 
+Expected Outcome: None of the document-lists returned will be identical to
+the other. 
+
+Input 1: "computer"
+Output 1: 
+1 - LEO (computer)
+2 - Hacker (term)
+3 - Malware
+4 - Motherboard
+5 - PCP
+6 - Gary Kildall
+7 - Foonly
+8 - PVC (disambiguation)
+9 - Graphical user interface
+10 - Knowbot
+
+Input 2: “science”
+Output 2:
+1 - Junk science        
+2 - Isaac Asimov        
+3 - History of physics  
+4 - Jack L. Chalker     
+5 - Lois McMaster Bujold
+6 - Mohism
+7 - Physical geography  
+8 - A Scanner Darkly    
+9 - PCP
+10 - Occult
+
+
+Input 3: “computer science”
+Output 3:
+1 - LEO (computer)
+2 - PCP
+3 - Junk science
+4 - Hacker (term)
+5 - Malware
+6 - Gary Kildall
+7 - Motherboard
+8 - Foonly
+9 - PVC (disambiguation)
+10 - Graphical user interface
+
+
+TEST SIX: Documents With the Same Relevance and Pagerank Scores 
+In this case, the XML document “SameRelevanceTestSec.xml” will be utilized. 
+The document contains 10 pages titled in alphabetical order, where the first is 
+named ‘A’, second is named ‘B’, and so on. Documents ‘A’ through ‘E’ (IDs 1-5) 
+possess the word “second” in their text. Documents ‘C’, ‘D’, and ‘E’ contain 
+the sequence of words “second second minute”, whereas documents ‘A’ and ‘B’ 
+contain the sequence of words and links “second second minute [[D]] [[E]]”. 
+As the 5 documents containing the word “second” all possess the same term 
+frequency and inverse document frequency values for the word, the respective 
+values of pages 1-5 will be the same within the ids_to_scores dictionary 
+populated through the Querier object when the word “second” is searched 
+for while the PageRank flag is set to false. 
+Expected Outcome: The same query with PageRank == True will yield a different
+list than the case wherein PageRank == False. As documents D and E are 
+linked-to the most, they will be the top two results returned. Therefore,
+the lists returned in the cases where PageRank is and isn't implemented will
+be different. 
+
+Input 1: "second", PageRank == False
+Output 1: 
+1 - A
+2 - B
+3 - C
+4 - D
+5 - E
+
+Input 2: "second", PageRank == True
+Output 1: 
+1 - D
+2 - E
+3 - A
+4 - B
+5 - C
+
+TEST SEVEN: Queries made that include arrangements of invalid and 
+upper-and-lower-case characters. 
+
+Expected Outcome: For any combination of invalid or upper-and-lower-case 
+characters and the word "Geography", the same results will be returned as 
+though only "Geography" was searched for. 
+
+
+Input 1: “[]^[]^[]^[] Geography” 
+Input 2: “gEoGrApHy”
+Input 3: “geography” 
+Input 4: "Geography"
+Output: 
+1 - Physical geography
+2 - Geography of the Northern Mariana Islands
+3 - Geography of Morocco
+4 - Karl Andree
+5 - Martin Waldseem?ller
+6 - Geography of Peru
+7 - Geography of Nicaragua
+8 - Homeland
+9 - Geography of Guinea
+10 - Geography of Hungary
+
+It can be observed that the same output is returned for each input. 
+
 
 
 
@@ -190,7 +438,8 @@ Please enter your query (or type :quit to leave the program): "
 ***********************************
   OUR RESULTS FOR MEDWIKI QUERIES
 ***********************************
-For all of the queries, we get a 10/10, with almost exactly the same order (when compared to TA results).
+For all of the queries, we get a 10/10, with almost exactly the same order 
+(when compared to TA results).
 
 1a. "baseball" (without PageRank)
 1 - Oakland Athletics
