@@ -14,8 +14,8 @@ import text_cleaner
 
 
 def test_indexer_page_no_text():
-    index_empty_page = Indexer("wikis/testing/text_parsing/EmptyPageTest.xml", "title_file.txt",
-                               "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/EmptyPageTest.xml",
+            "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     for word in testing_dict:
@@ -26,8 +26,8 @@ def test_indexer_page_no_text():
 # Makes an assertion that the size of the words_to_ids_to_relevances
 # dict written into words_file.txt will be empty.
 def test_indexer_all_pages_empty():
-    index_empty_page = Indexer("wikis/testing/text_parsing/AllEmptyPagesTest.xml", "title_file.txt",
-                               "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/AllEmptyPagesTest.xml",
+            "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     assert len(testing_dict) == 0
@@ -41,8 +41,8 @@ def test_indexer_all_pages_empty():
 
 
 def test_indexer_lower_upper():
-    index_upper_lower = Indexer("wikis/testing/text_parsing/UpperLowerTest.xml", "title_file.txt",
-                                "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/UpperLowerTest.xml",
+            "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     print(testing_dict)
@@ -50,8 +50,8 @@ def test_indexer_lower_upper():
 
 
 def test_indexer_lower_upper_multiple_pages():
-    index_upper_lower = Indexer("wikis/testing/text_parsing/UpperLowerTestPlural.xml", "title_file.txt",
-                                "docs_file.txt", "words_file.txt")
+    Indexer("wikis/testing/text_parsing/UpperLowerTestPlural.xml",
+            "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
 
     file_io.read_words_file("words_file.txt", testing_dict)
@@ -64,8 +64,8 @@ def test_indexer_lower_upper_multiple_pages():
 
 
 def test_indexer_all_stop_words():
-    index_all_stops = Indexer("wikis/testing/text_parsing/AllStopWords.xml", "title_file.txt",
-                              "docs_file.txt", "words_file.txt")
+    index_all_stops = Indexer("wikis/testing/text_parsing/AllStopWords.xml",
+                              "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
     stop_words = text_cleaner.stem_and_lower_words(["the", "a", "an", "in"])
@@ -425,8 +425,8 @@ def test_pagerank_scores_examples():
 
 
 def test_pagerank_small_wiki_adds_up_to_1():
-    Indexer("wikis/SmallWiki.xml", "title_file.txt",
-            "docs_file.txt", "words_file.txt")
+    Indexer("wikis/SmallWiki.xml", "title_file.txt", "docs_file.txt",
+            "words_file.txt")
     pagerank_scores = {}
     file_io.read_docs_file("docs_file.txt", pagerank_scores)
     sum = 0
@@ -463,8 +463,8 @@ def test_pagerank_weights_no_links_for_some_pages():
                         [0.0375, 0.4625, 0.0375, 0.4625], [0.3208, 0.3208, 0.3208, 0.0375]]
     for i in range(1, 5):
         for j in range(1, 5):
-            assert indexer.get_pagerank_weight(i, j) == pytest.approx(
-                expected_weights[i-1][j-1], 0.001)
+            assert indexer.get_pagerank_weight(i, j) == \
+                pytest.approx(expected_weights[i-1][j-1], 0.001)
 
 # Makes sure that computed scores are accurate when some pages link to nothing.
 
@@ -792,9 +792,11 @@ def test_query_score_docs():
         querier_with_pagerank.ids_to_scores.values())
 
     for id in querier_with_pagerank.ids_to_scores.keys():
-        assert querier_with_pagerank.ids_to_scores[id] != querier.ids_to_scores[id]
+        assert querier_with_pagerank.ids_to_scores[id] != \
+            querier.ids_to_scores[id]
         if id != 6:
-            assert querier_with_pagerank.ids_to_scores[id] < querier_with_pagerank.ids_to_scores[6]
+            assert querier_with_pagerank.ids_to_scores[id] < \
+                querier_with_pagerank.ids_to_scores[6]
 
 
 def test_simple_relevance_test():
