@@ -98,6 +98,7 @@ the program informs the user of how long it took to complete the Indexing proces
 We have tested our program with both unit and system tests.
 The unit tests are in test_search.py and test text, title, link parsing,
 relevance scores, PageRank scores, as well as some helper methods in our program.
+Comments are indicated at the top of each unit test to indicate its purpose.
 
 As for the system tests, they are outlined below.
 
