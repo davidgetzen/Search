@@ -2,7 +2,7 @@
 This is our text_cleaner module. It contains important methods to tokenize,
 remove stop words, and stem words.
 
-We have decided to create this module because its functions are used in Indexer,
+We decided to create this module because its functions are used in Indexer,
 Querier, and the test file. We didn't want to copy the same functions over and
 over again.
 """
@@ -42,7 +42,6 @@ A copy of the inputted list, without the stop words.
 
 def remove_stop_words(word_list):
     return [word for word in word_list if word not in STOP_WORDS]
-
 
 """
 Stems and lower words, using the nltk PorterStemmer.
