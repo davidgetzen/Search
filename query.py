@@ -86,11 +86,11 @@ if __name__ == "__main__":
 
     if len(sys.argv) < 4 or (len(sys.argv) < 5 and is_pagerank):
         print("Too few arguments were given!")
-        print("Usage is: query.py [--pagerank] <XML filepath> <title file> <docs file> <words file>")
+        print("Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
         exit()
     elif (len(sys.argv) > 4 and not is_pagerank) or len(sys.argv) > 5:
         print("Too many arguments were given!")
-        print("Usage is: query.py [--pagerank] <XML filepath> <title file> <docs file> <words file>")
+        print("Usage is: query.py [--pagerank] <title file> <docs file> <words file>")
         exit()
     elif not is_pagerank and "--" in sys.argv[1]:
         print(sys.argv[1] + " is not a valid flag!")
