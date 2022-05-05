@@ -56,6 +56,7 @@ class Indexer:
 
     Throws:
     FileNotFoundError - if the XML file given is not found. This error is handled by the main method.
+    ParseError - if the file given is not in an adequate format.
     """
 
     def start_indexing(self):
