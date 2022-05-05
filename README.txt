@@ -156,14 +156,14 @@ Expected output: An informative message saying that the file wasn’t found.
 Input: python query.py --pagerank titles.txt docs.txt werds.txt
 Output: “File werds.txt was not found.” 
 
-SEVENTH CASE: Too many arguments are given, (with -–pagerank).
+TEST SEVEN: Too many arguments are given, (with -–pagerank).
 Input: python query.py --pagerank titles.txt docs.txt words.txt anotherone.txt furthermore.txt
 Expected output: An informative message about the problem and an indication of how to properly use the program.
 
 Output: “Too many arguments were given!
 Usage is: query.py [--pagerank] <title file> <docs file> <words file>”
 
-SEVENTH CASE: Too many arguments are given, (without --pagerank).
+TEST EIGHT: Too many arguments are given, (without --pagerank).
 (here, we want to make sure that the code knows that four arguments is too much when no –-pagerank flag is added).
 Input: python query.py titles.txt docs.txt words.txt anotherone.txt 
 Expected output: An informative message about the problem and an indication of how to properly use the program.
@@ -171,7 +171,7 @@ Expected output: An informative message about the problem and an indication of h
 Output: “Too many arguments were given!
 Usage is: query.py [--pagerank] <title file> <docs file> <words file>”
 
-EIGTH CASE: The files given exist, but they are all empty.
+TEST NINE: The files given exist, but they are all empty.
 Expected output: Nothing specific, just that none of the queries give results.
 
 Input: python query.py "title_file.txt" "docs_file.txt" "words_file.txt"
