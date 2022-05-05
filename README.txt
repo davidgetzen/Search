@@ -187,6 +187,14 @@ Output: "Please enter your query (or type :quit to leave the program): hello
 Sorry! No search results were found.
 Please enter your query (or type :quit to leave the program): "
 
+TEST TEN: Giving ":quit" to the querier.
+Expected output: The program should stop.
+
+Input: python query.py "title_file.txt" "docs_file.txt" "words_file.txt"
+Output: "Please enter your query (or type :quit to leave the program): :quit"
+
+We observe that the program stops.
+
 ***********************************
   QUERY RESULTS FOR SPECIAL CASES
 ***********************************
@@ -437,11 +445,6 @@ Output:
 10 - Geography of Hungary
 
 It can be observed that the same output is returned for each input. 
-
-
-
-
-
 
 ***********************************
   OUR RESULTS FOR MEDWIKI QUERIES
