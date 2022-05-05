@@ -68,6 +68,8 @@ def test_indexer_all_stop_words():
     for word in stop_words:
         assert word not in list(testing_dict.keys())
 
+# Tests that words in the pages' text are stemmed, and that their original form
+# is not in the list of parsed words.
 def test_indexer_words_stemmed():
     Indexer("wikis/testing/text_parsing/AreWordsStemmed.xml", "title_file.txt",
                               "docs_file.txt", "words_file.txt")        
@@ -81,6 +83,7 @@ def test_indexer_words_stemmed():
     for word in original_words:
         assert word not in list(testing_dict.keys())
 
+# Tests that special characters disappear in the process of tokenizing.
 def test_indexer_special_characters():
     Indexer("wikis/testing/text_parsing/TextSpecialCharacters.xml", "title_file.txt",
                               "docs_file.txt", "words_file.txt")        
