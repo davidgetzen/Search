@@ -206,16 +206,16 @@ and "computer                science"
 Input 1: “computer science”
 Input 2:  “computer                                          science” 
 Output: 
-LEO (computer)
-PCP
-Junk science
-Hacker (term)
-Malware
-Gary Kildall
-Motherboard
-Foonly
-PVC (disambiguation)
-Graphical user interface
+1 - LEO (computer)
+2 - PCP
+3 - Junk science
+4 - Hacker (term)
+5 - Malware
+6 - Gary Kildall
+7 - Motherboard
+8 - Foonly
+9 - PVC (disambiguation)
+10 - Graphical user interface
 
 TEST TWO: Query given where the first word is recognized within the 
 XML, and the second is not recognized within the XML. 
@@ -225,15 +225,15 @@ in both cases. The term not found within the XML will be ignored.
 Input 1: "Jonathan Swift"
 Output:
 1 - Jonathan Swift
-2 - Harappa
-3 - Nigeria
-4 - Ontology
-5 - Kuomintang
-6 - Netherlands
-7 - Portugal
-8 - Nazi Germany
-9 - Joseph Stalin
-10 - Pope Clement III
+2 - Girolamo Aleandro
+3 - Jerome Callet
+4 - Pope Clement III
+5 - Manasseh
+6 - Free-running sleep
+7 - Harappa
+8 - Pale Fire
+9 - Kuomintang
+10 - John Major
 
 Input 2: "Kumon"
 Output 2:
@@ -242,15 +242,15 @@ Output 2:
 Input 3: “Jonathan Swift Kumon”
 Output 3:
 1 - Jonathan Swift
-2 - Harappa
-3 - Nigeria
-4 - Ontology
-5 - Kuomintang
-6 - Netherlands
-7 - Portugal
-8 - Nazi Germany
-9 - Joseph Stalin
-10 - Pope Clement III
+2 - Girolamo Aleandro
+3 - Jerome Callet
+4 - Pope Clement III
+5 - Manasseh
+6 - Free-running sleep
+7 - Harappa
+8 - Pale Fire
+9 - Kuomintang
+10 - John Major
 
 TEST THREE: Query given where the first word is recognized within the 
 XML, and the second is not recognized within the XML. For clairty's sake
@@ -298,50 +298,49 @@ the other.
 
 Input 1: "Computer"
 Output 1: 
-1 - Graphical user interface
-2 - John von Neumann
-3 - Motherboard
-4 - MD5
-5 - LEO (computer)
-6 - Malware
-7 - O
-8 - Hacker (term)
-9 - Gary Kildall
-10 - Password
+1 - Malware
+2 - LEO (computer)
+3 - O
+4 - John von Neumann
+5 - Hacker (term)
+6 - Gary Kildall
+7 - Graphical user interface
+8 - P
+9 - Motherboard
+10 - PCP
 
 Input 2: “Science”
 Output 2:
-1 - Ontology
-2 - Portugal
-3 - Magnetosphere
-4 - J?rgen Habermas
-5 - Junk science
-6 - Mercury (planet)
-7 - Planet
-8 - Immunology
-9 - Galilean moons
-10 - Islamabad Capital Territory
-
+1 - Portugal
+2 - Islamabad Capital Territory
+3 - J?rgen Habermas
+4 - Mercury (planet)
+5 - Isaac Asimov
+6 - George Berkeley
+7 - Pakistan
+8 - Netherlands
+9 - Junk science
+10 - Neolithic
 
 Input 3: “Computer Science”
 Output 3:
-1 - Graphical user interface
-2 - Portugal
-3 - Ontology
-4 - Magnetosphere
-5 - J?rgen Habermas
-6 - Planet
-7 - Junk science
-8 - Mercury (planet)
-9 - John von Neumann
-10 - Immunology
+1 - Portugal
+2 - Islamabad Capital Territory
+3 - J?rgen Habermas
+4 - Mercury (planet)
+5 - Isaac Asimov
+6 - Malware
+7 - LEO (computer)
+8 - Pakistan
+9 - O
+10 - John von Neumann
 
 TEST FIVE: Results for queries “Computer”, “Computer Science”, and 
 “Science” will be observed to ensure that the relevance scores 
 for the results of the query “Computer Science” are different from 
 those corresponding to just “Computer” or “Science”. For clarity's sake, this
 is the same test as TEST FOUR, with the expection that PageRank calculations
-are not utilized in returning documents. 
+are NOT utilized in returning documents. 
 Expected Outcome: None of the document-lists returned will be identical to
 the other. 
 
@@ -360,16 +359,16 @@ Output 1:
 
 Input 2: “science”
 Output 2:
-1 - Junk science        
-2 - Isaac Asimov        
-3 - History of physics  
-4 - Jack L. Chalker     
+1 - Junk science
+2 - Isaac Asimov
+3 - History of physics
+4 - Jack L. Chalker
 5 - Lois McMaster Bujold
 6 - Mohism
-7 - Physical geography  
-8 - A Scanner Darkly    
+7 - Physical geography
+8 - A Scanner Darkly
 9 - PCP
-10 - Occult
+10 - Prometheus Award
 
 
 Input 3: “computer science”
@@ -421,12 +420,11 @@ Output 1:
 5 - C
 
 TEST SEVEN: Queries made that include arrangements of invalid and 
-upper-and-lower-case characters. 
+upper-and-lower-case characters. PageRank is ON.
 
 Expected Outcome: For any combination of invalid or upper-and-lower-case 
 characters and the word "Geography", the same results will be returned as 
 though only "Geography" was searched for. 
-
 
 Input 1: “[]^[]^[]^[] Geography” 
 Input 2: “gEoGrApHy”
@@ -444,7 +442,52 @@ Output:
 9 - Geography of Guinea
 10 - Geography of Hungary
 
-It can be observed that the same output is returned for each input. 
+It can be observed that the same output is returned for each input.
+
+TEST EIGHT: Queries with different stop words with different capitalizations.
+The Wiki used here is MediumWiki. PageRank is OFF (but it doesn't matter).
+Expected outcome: For each of these queries, no results should be found
+as stop words should be automatically removed when processing the query.
+
+Input 1: "the"
+Output 1: "Sorry! No search results were found."
+
+Input 2: "The Is With"
+Output 2: "Sorry! No search results were found."
+
+Input 3: "this is the"
+Output 3: "Sorry! No search results were found."
+
+TEST NINE: Capitalizations do not affect search results if added
+to the query. MediumWiki is used. PageRank is OFF (but it doesn't matter)
+Expected outcome: The results for "The Computer Science With" and "Computer Science"
+should be the same.
+
+Input 1: "Computer Science"
+Output 1:
+1 - LEO (computer)
+2 - PCP
+3 - Junk science
+4 - Hacker (term)
+5 - Malware
+6 - Gary Kildall
+7 - Motherboard
+8 - Foonly
+9 - PVC (disambiguation)
+10 - Graphical user interface
+
+Input 2: "The Computer Science With"
+Output 2:
+1 - LEO (computer)
+2 - PCP
+3 - Junk science
+4 - Hacker (term)
+5 - Malware
+6 - Gary Kildall
+7 - Motherboard
+8 - Foonly
+9 - PVC (disambiguation)
+10 - Graphical user interface
 
 ***********************************
   OUR RESULTS FOR MEDWIKI QUERIES
@@ -529,12 +572,12 @@ For all of the queries, we get a 10/10, with almost exactly the same order
 2 - Imperial units
 3 - Joule
 4 - Knowledge Aided Retrieval in Activity Context
-5 - Elbridge Gerry
-6 - Martin Van Buren
-7 - Pennsylvania
-8 - Finite-state machine
-9 - Louisiana
-10 - Metastability
+5 - Imperialism in Asia
+6 - Elbridge Gerry
+7 - Martin Van Buren
+8 - Pennsylvania
+9 - Finite-state machine
+10 - Louisiana
 
 4b. "United States" (with PageRank)
 1 - Netherlands
@@ -551,10 +594,10 @@ For all of the queries, we get a 10/10, with almost exactly the same order
 5a. "united" (without PageRank)
 1 - Imperial units
 2 - Joule
-3 - Gauss (unit)
-4 - Knowledge Aided Retrieval in Activity Context
-5 - Inch
-6 - Imperialism in Asia
+3 - Imperialism in Asia
+4 - Gauss (unit)
+5 - Knowledge Aided Retrieval in Activity Context
+6 - Inch
 7 - Elbridge Gerry
 8 - Martin Van Buren
 9 - FSB
@@ -577,8 +620,8 @@ For all of the queries, we get a 10/10, with almost exactly the same order
 2 - Martin Waldseem?ller
 3 - G?tterd?mmerung
 4 - Fahrenheit 451
-5 - Kraftwerk
-6 - Prometheus Award
+5 - Prometheus Award
+6 - Kraftwerk
 7 - Mandy Patinkin
 8 - Nirvana (UK band)
 9 - Gregory Chaitin
@@ -625,8 +668,8 @@ For all of the queries, we get a 10/10, with almost exactly the same order
 2 - J.E.B. Stuart
 3 - Navy
 4 - Heart of Oak
-5 - Front line
-6 - Irish mythology
+5 - Irish mythology
+6 - Front line
 7 - Oda Nobunaga
 8 - Girolamo Aleandro
 9 - Mehmed II
@@ -647,8 +690,8 @@ For all of the queries, we get a 10/10, with almost exactly the same order
 9a. "search" (without PageRank)
 1 - Natasha Stott Despoja
 2 - Kaluza?Klein theory
-3 - PHP-Nuke
-4 - Eth
+3 - Eth
+4 - PHP-Nuke
 5 - Gopher (protocol)
 6 - Isa (disambiguation)
 7 - Lorisidae

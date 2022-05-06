@@ -56,13 +56,15 @@ def test_indexer_lower_upper_multiple_pages():
 
 # Tests the indexer on the text of a page consisting of all stop words.
 # Asserts that none of the stop words will be included in the
-# words_to_ids_to_relevance dict written into words_file.txt.
+# words_to_ids_to_relevance dict written into words_file.txt, including
+# the stop words that were capitalized.
 def test_indexer_all_stop_words():
     index_all_stops = Indexer("wikis/testing/text_parsing/AllStopWords.xml",
                               "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
-    stop_words = text_cleaner.stem_and_lower_words(["the", "a", "an", "in"])
+    stop_words = text_cleaner.stem_and_lower_words(["the", "a", "an", "in", 
+    "This", "Are", "With", "The"])
     for word in stop_words:
         assert word not in list(testing_dict.keys())
 
