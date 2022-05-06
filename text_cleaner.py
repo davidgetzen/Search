@@ -34,10 +34,10 @@ def tokenize_text(text):
 Removes stop words, using nltk, from a list of strings given to it.
 
 Parameters:
-word_list - a list of strings to remove stop words from.
+word_list - a list of strings to remove stop words from and lower.
 
 Returns:
-A copy of the inputted list, without the stop words.
+A copy of the inputted list, without the stop words, and lowered.
 """  
 
 def remove_stop_words_and_lower(word_list):
@@ -47,10 +47,10 @@ def remove_stop_words_and_lower(word_list):
 Stems and lower words, using the nltk PorterStemmer.
 
 Parameters:
-word_list - a list of words to stem and lower.
+word_list - a list of words to stem.
 
 Returns:
-A copy of the list, with words lowered and stemmed.
+A copy of the list, with words stemmed.
 """
 
 def stem_words(word_list):
