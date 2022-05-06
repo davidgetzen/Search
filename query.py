@@ -132,8 +132,8 @@ class Querier:
 
     def get_query_words(self, query_text):
         tokens = text_cleaner.tokenize_text(query_text)
-        stop_removed = text_cleaner.remove_stop_words(tokens)
-        stemmed = text_cleaner.stem_and_lower_words(stop_removed)
+        stop_removed = text_cleaner.remove_stop_words_and_lower(tokens)
+        stemmed = text_cleaner.stem_words(stop_removed)
         return stemmed
 
     """

@@ -40,7 +40,7 @@ Returns:
 A copy of the inputted list, without the stop words.
 """  
 
-def remove_stop_words(word_list):
+def remove_stop_words_and_lower(word_list):
     return [word.lower() for word in word_list if word.lower() not in STOP_WORDS]
 
 """
@@ -53,5 +53,5 @@ Returns:
 A copy of the list, with words lowered and stemmed.
 """
 
-def stem_and_lower_words(word_list):
+def stem_words(word_list):
     return [the_stemmer.stem(word.lower()) for word in word_list]    

@@ -165,8 +165,8 @@ class Indexer:
     def get_page_words(self, page_text, page_id):
         page_tokens = text_cleaner.tokenize_text(page_text)
         page_with_links_handled = self.handle_links(page_tokens, page_id)
-        page_without_stop_words = text_cleaner.remove_stop_words(page_with_links_handled)
-        final_word_list = text_cleaner.stem_and_lower_words(page_without_stop_words)
+        page_without_stop_words = text_cleaner.remove_stop_words_and_lower(page_with_links_handled)
+        final_word_list = text_cleaner.stem_words(page_without_stop_words)
         return final_word_list
 
     """

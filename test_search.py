@@ -63,7 +63,7 @@ def test_indexer_all_stop_words():
                               "title_file.txt", "docs_file.txt", "words_file.txt")
     testing_dict = {}
     file_io.read_words_file("words_file.txt", testing_dict)
-    stop_words = text_cleaner.stem_and_lower_words(["the", "a", "an", "in", 
+    stop_words = text_cleaner.stem_words(["the", "a", "an", "in", 
     "This", "Are", "With", "The"])
     for word in stop_words:
         assert word not in list(testing_dict.keys())
@@ -77,7 +77,7 @@ def test_indexer_words_stemmed():
     file_io.read_words_file("words_file.txt", testing_dict)
     original_words = ["Computer", "Science", "Cheese", "Charger",
                       "Stupid", "Hello", "Awesome"]
-    stemmed = text_cleaner.stem_and_lower_words(original_words)
+    stemmed = text_cleaner.stem_words(original_words)
     for word in stemmed:
         assert word in list(testing_dict.keys())
     for word in original_words:
@@ -92,7 +92,7 @@ def test_indexer_special_characters():
     original_words = ["Computer", "Science", "Cheese", "Charger",
                       "Stupid", "Hello", "Awesome"]
     special_chars = ["$", "%", ";", ",", "#", "@"]
-    special = text_cleaner.stem_and_lower_words(original_words)
+    special = text_cleaner.stem_words(original_words)
     for word in special:
         assert word in list(testing_dict.keys())
     for chara in special_chars:
@@ -159,9 +159,9 @@ def test_indexer_links_pipe():
 
     # These words were ONLY apparent to the right of the pipe.
     words_in_links = ["Calculus", "Socrates", "CS", "computations"]
-    expected_without_stop_words = text_cleaner.remove_stop_words(
+    expected_without_stop_words = text_cleaner.remove_stop_words_and_lower(
         words_in_links)
-    expected_words = text_cleaner.stem_and_lower_words(
+    expected_words = text_cleaner.stem_words(
         expected_without_stop_words)
 
     actual_words = {}
@@ -205,9 +205,9 @@ def test_indexer_links_pipe_special_characters():
     words_in_links = ["Calculus", "Socrates", "CS"]
     special_characters_in_words = ["$", "/", " ", "", "%"]
 
-    expected_without_stop_words = text_cleaner.remove_stop_words(
+    expected_without_stop_words = text_cleaner.remove_stop_words_and_lower(
         words_in_links)
-    expected_words = text_cleaner.stem_and_lower_words(
+    expected_words = text_cleaner.stem_words(
         expected_without_stop_words)
 
     actual_words = {}
@@ -236,9 +236,9 @@ def test_indexer_meta_links():
     }
 
     words_in_links = ["Category", "Computer", "Science", "Mathematics"]
-    expected_without_stop_words = text_cleaner.remove_stop_words(
+    expected_without_stop_words = text_cleaner.remove_stop_words_and_lower(
         words_in_links)
-    expected_words = text_cleaner.stem_and_lower_words(
+    expected_words = text_cleaner.stem_words(
         expected_without_stop_words)
 
     actual_words = {}
@@ -261,9 +261,9 @@ def test_indexer_meta_links_spaces():
     }
 
     words_in_links = ["Category", "Computer", "Science", "Mathematics"]
-    expected_without_stop_words = text_cleaner.remove_stop_words(
+    expected_without_stop_words = text_cleaner.remove_stop_words_and_lower(
         words_in_links)
-    expected_words = text_cleaner.stem_and_lower_words(
+    expected_words = text_cleaner.stem_words(
         expected_without_stop_words)
 
     actual_words = {}
